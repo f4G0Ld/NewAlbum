@@ -6,7 +6,7 @@ import { AiFillInstagram } from "react-icons/ai";
 
 export function Header() {
 	return (
-		<div className="flex justify-between p-8">
+		<div className="flex justify-between p-12">
 			<div className="flex gap-15 text-2xl">
 				<Link href="/">Store</Link>
 				<Link href="/">Live</Link>
