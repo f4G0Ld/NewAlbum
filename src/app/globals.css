@@ -26,6 +26,6 @@ body {
 	}
 }
 
-
-
-
+* {
+	scrollbar-width: none;
+}

@@ -25,15 +25,18 @@ export default function Main() {
 
 					<div className="">
 						<Image
-							className="absolute mx-12 mb-12"
+							className="absolute mx-12 mb-12 pb-12"
 							src={MainBackground}
 							alt="!"
 							width={1824}
 							height={909}
 						/>
 						<div>
+							<span className="text-[40px] font-[Anton] bg-[#FFE484] p-7.5 rounded-full absolute right-1/3 z-20">
+								new
+							</span>
 							<Image
-								className="absolute top-1/2.5 right-1/4 rounded-full hover:animate-spin hover:[animation-duration:3s] "
+								className="absolute top-1/2.5 right-1/4 rounded-full hover:animate-spin hover:[animation-duration:3s]"
 								src={VinylLogo}
 								alt="!"
 								width={840}

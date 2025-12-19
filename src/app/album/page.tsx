@@ -5,12 +5,12 @@ export default function Album() {
 		<div>
 			<Header />
 			<div>
-				<div className="flex justify-between mx-12">
-					<div className="flex gap-5">
+				<div className="flex justify-between mx-12 items-baseline-last">
+					<div className="flex gap-4 items-baseline-last">
 						<h2 className="text-[32px] text-[Anton]">Song list</h2>
-						<p>12 items</p>
+						<p className="text-[20px]">12 items</p>
 					</div>
-					<p>Listen to an excerpt of a song</p>
+					<p className="text-[20px]">Listen to an excerpt of a song</p>
 				</div>
 				<div></div>
 			</div>

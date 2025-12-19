@@ -12,7 +12,7 @@ export function Header() {
 				<Link href="/">Store</Link>
 				<Link href="/">Live</Link>
 				<Link href="/">Videos</Link>
-				<Link className="flex gap-2 items-center" href="/">
+				<Link className="flex gap-2 items-center" href="/album">
 					New album
 					<Image
 						className="w-7.5 h-3.75"
@@ -23,7 +23,9 @@ export function Header() {
 					/>
 				</Link>
 			</div>
-			<Image src={GroupLogoIcon} alt="Group Logo" width={121} height={61} />
+			<Link href="/">
+				<Image src={GroupLogoIcon} alt="Group Logo" width={121} height={61} />
+			</Link>
 			<div className="flex gap-5 items-center">
 				<a href="/" target="_blank" rel="noopener norefferer">
 					<FaTwitter size={30} />
