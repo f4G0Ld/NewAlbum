@@ -1,6 +1,8 @@
 import { Header } from "@/src/components/header";
 
 export default function Album() {
+	
+	
 	return (
 		<div>
 			<Header />
@@ -12,7 +14,9 @@ export default function Album() {
 					</div>
 					<p className="text-[20px]">Listen to an excerpt of a song</p>
 				</div>
-				<div></div>
+				<div>
+
+				</div>
 			</div>
 		</div>
 	);
