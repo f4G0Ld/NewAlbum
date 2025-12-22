@@ -18,6 +18,23 @@ export async function uploadFile({ file }: { file: File }) {
 	const mimeType = mime.lookup(file.name);
 	const resolvedMimeType = mimeType ? mimeType : "application/octet-stream";
 
+	const getAudioDuration = (file: File): Promise<number> => {
+		return new Promise((resolve) => {
+			const audio = new Audio();
+			audio.src = URL.createObjectURL(file);
+			audio.onloadedmetadata = () => {
+				URL.revokeObjectURL(audio.src);
+				resolve(audio.duration);
+			};
+		});
+	};
+
+	let duration: number;
+
+	if (mimeType === "audio/") {
+		duration = await getAudioDuration(file);
+	}
+
 	let id: string | undefined;
 	await db.transaction(async (trx) => {
 		const [f] = await trx
@@ -26,6 +43,7 @@ export async function uploadFile({ file }: { file: File }) {
 				filename: file.name,
 				fileSize: file.size,
 				contentType: resolvedMimeType,
+				duration,
 			})
 			.returning();
 
@@ -47,6 +65,7 @@ export async function uploadFile({ file }: { file: File }) {
 
 export type FileMetadata = {
 	id: string;
+	duration: number;
 	filename: string;
 	contentType: string;
 	fileSize: number;

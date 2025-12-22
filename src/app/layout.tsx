@@ -1,3 +1,5 @@
+'use client'
+
 import "@fontsource/open-sans-condensed";
 import "@fontsource/anton";
 import "./globals.css";

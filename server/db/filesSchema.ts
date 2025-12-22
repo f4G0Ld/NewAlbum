@@ -15,4 +15,6 @@ export const files = pg.pgTable("files", {
 	contentType: pg.varchar("content_type", { length: 255 }).notNull(),
 
 	createdAt: pg.timestamp("created_at").notNull().defaultNow(),
+
+	duration: pg.integer("duration").notNull(),
 });

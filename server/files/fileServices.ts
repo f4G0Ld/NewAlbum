@@ -1,15 +1,17 @@
 import Elysia from "elysia";
-import { DeleteFile, GetFileMetadata, uploadFile } from "./s3";
-import { s3 } from "bun";
+import { DeleteFile, GetFileMetadata, uploadFile, s3 } from "./s3";
 import { db } from "../db/database";
+import { userRouter } from "./userServices";
 
 export const fileRouter = new Elysia({
 	prefix: "/files",
 })
 
-.get('/', async () => {
-	return await db.query.files.findMany()
-})
+	.use(userRouter)
+
+	.get("/", async () => {
+		return await db.query.files.findMany();
+	})
 
 	.get("/:id", async ({ params, set }) => {
 		const meta = await GetFileMetadata(params.id);
@@ -49,23 +51,36 @@ export const fileRouter = new Elysia({
 			contentType: meta.contentType,
 			fileName: meta.filename,
 			size: (await s3File.stat()).size,
+			duration: meta.duration,
 		};
 	})
 
-	.post("/", async ({ request }) => {
-		const form = request.formData();
-		const files = (await form).getAll("files") as File[];
+	.post(
+		"/",
+		async ({ request }) => {
+			const form = request.formData();
+			const files = (await form).getAll("files") as File[];
 
-		await Promise.all(
-			files.map(
-				async (f) =>
-					await uploadFile({
-						file: f,
-					}),
-			),
-		);
-	})
+			await Promise.all(
+				files.map(
+					async (f) =>
+						await uploadFile({
+							file: f,
+						}),
+				),
+			);
+		},
+		{
+			auth: true,
+		},
+	)
 
-    .delete('/:id', async ({params}) => {
-        await DeleteFile(params.id)
-    })
+	.delete(
+		"/:id",
+		async ({ params }) => {
+			await DeleteFile(params.id);
+		},
+		{
+			auth: true,
+		},
+	);

@@ -1,8 +1,10 @@
 import { Header } from "@/src/components/header";
+import { SongCart } from "@/src/components/songCard";
+import AdvancedPlayer from "@/src/components/songList";
 
 export default function Album() {
 	
-	
+
 	return (
 		<div>
 			<Header />
@@ -15,7 +17,7 @@ export default function Album() {
 					<p className="text-[20px]">Listen to an excerpt of a song</p>
 				</div>
 				<div>
-
+					<SongCart />
 				</div>
 			</div>
 		</div>
