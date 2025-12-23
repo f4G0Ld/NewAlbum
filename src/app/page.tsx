@@ -9,7 +9,7 @@ export default function Main() {
 			<div>
 				<Header />
 				<div className="">
-					<div className="flex justify-between items-baseline-last mx-12 mt-15">
+					<div className="flex justify-between items-end mx-12 mt-15">
 						<div className="flex flex-col gap-5 leading-none">
 							<p className="text-[24px]">NEW FIFTH ALBUM</p>
 							<h1 className="text-[60px]">

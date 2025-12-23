@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import "@fontsource/open-sans-condensed";
 import "@fontsource/anton";
@@ -13,7 +13,11 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en">
-			<body className={`text-[Open Sans Condensed]`}><QueryClientProvider client={queryClient}>{children}</QueryClientProvider></body>
+			<body className={`text-[Open Sans Condensed]`}>
+				<QueryClientProvider client={queryClient}>
+					{children}
+				</QueryClientProvider>
+			</body>
 		</html>
 	);
 }

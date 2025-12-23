@@ -69,10 +69,10 @@ export const fileRouter = new Elysia({
 						}),
 				),
 			);
-		},
-		{
-			auth: true,
-		},
+		}
+		// {
+		// 	auth: true,
+		// },
 	)
 
 	.delete(

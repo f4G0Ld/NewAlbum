@@ -6,26 +6,23 @@ import Link from "next/link";
 import { PiSignOutBold } from "react-icons/pi";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "@tanstack/react-form";
+import { Button } from "@/components/ui/button";
+import { UploadFiles } from "@/src/api";
+import { queryClient } from "@/src/queryClient";
 
 export default function Admin() {
 	const loadFilesMutation = useMutation({
 		mutationFn: async (value: File[]) => {
-			const formData = new FormData();
+			const res = await UploadFiles(value);
 
-			value.forEach((f) => formData.append("files", f));
+			if (!res.ok) {
+				throw new Error(String(res.status));
+			}
 
-			const res = await fetch("/api/files", {
-				method: "POST",
-				body: formData,
-				credentials: "include",
-			});
-
-            if (!res.ok) {
-                console.error(res.status)
-                throw new Error('Ошибка получения')
-            }
-
-			return res;
+			form.reset();
+		},
+		onSuccess: async () => {
+			queryClient.invalidateQueries({ queryKey: ["files"] });
 		},
 	});
 
@@ -34,9 +31,15 @@ export default function Admin() {
 			file: null as File[] | null,
 		},
 		onSubmit: async ({ value }) => {
-			await loadFilesMutation.mutateAsync(value.file!);
+			if (value.file === null) {
+				console.log("долбоеб, тут пусто");
+			} else {
+				await loadFilesMutation.mutateAsync(value.file);
+			}
 		},
 	});
+
+	const Field = form.Field;
 
 	return (
 		<div className="px-15 py-10 flex flex-col gap-20">
@@ -46,11 +49,37 @@ export default function Admin() {
 				</Link>
 				<Link href="/sign-out" className="flex gap-3 items-center">
 					<p className="text-[24px]">Sign Out</p>
-					<PiSignOutBold size={40} />
+					<PiSignOutBold size={24} />
 				</Link>
 			</div>
 			<h1 className="text-[40px] leading-none">Admin Panel</h1>
-			<input type="file" multiple />
+			<form
+				onSubmit={(e) => {
+					e.preventDefault();
+					form.handleSubmit();
+				}}
+			>
+				<Field name="file">
+					{(f) => (
+						<div className="space-y-3">
+							<h2 className="text-[20px]">Upload Song</h2>
+							<input
+								type="file"
+								multiple
+								accept="audio/"
+								placeholder="Upload Song"
+								onChange={(e) => {
+									const files = e.target.files;
+									if (files !== null) f.handleChange(Array.from(files));
+								}}
+							/>
+						</div>
+					)}
+				</Field>
+				<Button variant={"ghost"} type="submit">
+					Button
+				</Button>
+			</form>
 		</div>
 	);
 }

@@ -3,8 +3,6 @@ import { SongCart } from "@/src/components/songCard";
 import AdvancedPlayer from "@/src/components/songList";
 
 export default function Album() {
-	
-
 	return (
 		<div>
 			<Header />
