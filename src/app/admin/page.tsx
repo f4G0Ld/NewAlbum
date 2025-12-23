@@ -14,8 +14,8 @@ export default function Admin() {
 	const loadFilesMutation = useMutation({
 		mutationFn: async (value: File[]) => {
 			const res = await UploadFiles(value);
-
 			if (!res.ok) {
+				console.log(res)
 				throw new Error(String(res.status));
 			}
 

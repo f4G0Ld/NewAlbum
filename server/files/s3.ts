@@ -31,9 +31,11 @@ export async function uploadFile({ file }: { file: File }) {
 
 	let duration: number;
 
-	if (mimeType === "audio/") {
+	if (resolvedMimeType.startsWith("audio/")) {
 		duration = await getAudioDuration(file);
+		console.log(duration)
 	}
+	
 
 	let id: string | undefined;
 	await db.transaction(async (trx) => {
