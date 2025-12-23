@@ -1,5 +1,5 @@
 import * as pg from "drizzle-orm/pg-core";
-export * from './filesSchema'
+export * from "./filesSchema";
 
 export const songs = pg.pgTable("songs", {
 	id: pg
@@ -9,5 +9,4 @@ export const songs = pg.pgTable("songs", {
 		.$defaultFn(() => Bun.randomUUIDv7()),
 
 	title: pg.varchar({ length: 255 }).notNull(),
-
 });

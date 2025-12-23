@@ -1,8 +1,21 @@
+'use client'
+
+import { api } from "@/src/api";
 import { Header } from "@/src/components/header";
 import { SongCart } from "@/src/components/songCard";
-import AdvancedPlayer from "@/src/components/songList";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Album() {
+	const {data: songs} = useQuery({
+		queryKey:['songs'],
+		queryFn: async () => {
+			const {data, error} = await api.files.get()
+			if (error) 
+				throw new Error(String(error.status))
+			return data
+		}
+
+	})
 	return (
 		<div>
 			<Header />
@@ -14,9 +27,9 @@ export default function Album() {
 					</div>
 					<p className="text-[20px]">Listen to an excerpt of a song</p>
 				</div>
-				<div>
-					<SongCart />
-				</div>
+				<div>{songs?.map((s) => (
+					<SongCart song={s} key={s.id} />
+				))}</div>
 			</div>
 		</div>
 	);

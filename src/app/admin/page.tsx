@@ -9,20 +9,67 @@ import { useForm } from "@tanstack/react-form";
 import { Button } from "@/components/ui/button";
 import { UploadFiles } from "@/src/api";
 import { queryClient } from "@/src/queryClient";
+import { useState } from "react";
+import { files } from "@/server/db/filesSchema";
+import { SongCart } from "@/src/components/songCard";
+
+const getAudioDuration = (file: File): Promise<number> => {
+	return new Promise((resolve, reject) => {
+		const audio = new Audio();
+		audio.src = URL.createObjectURL(file);
+		audio.onloadedmetadata = () => {
+			URL.revokeObjectURL(audio.src);
+			resolve(Math.floor(audio.duration));
+		};
+
+		audio.onerror = () => {
+			URL.revokeObjectURL(audio.src);
+			reject(new Error("Не удалось загрузить аудио"));
+		};
+	});
+};
 
 export default function Admin() {
-	const loadFilesMutation = useMutation({
-		mutationFn: async (value: File[]) => {
-			const res = await UploadFiles(value);
-			if (!res.ok) {
-				console.log(res)
-				throw new Error(String(res.status));
-			}
+	const [isCalculating, setIsCalculating] = useState(false);
 
-			form.reset();
+	const loadFilesMutation = useMutation({
+		mutationFn: async (files: File[]) => {
+			setIsCalculating(true);
+			try {
+				const filesWithDuration = await Promise.all(
+					files.map(async (file) => {
+						let duration = 0;
+
+						if (file.type.startsWith("audio/")) {
+							try {
+								duration = await getAudioDuration(file);
+								console.log(`File: ${file.name}; Duration: ${duration} sec`);
+							} catch (error) {
+								console.error(`Bug for ${file.name}:`, error);
+							}
+						}
+
+						return { file, duration };
+					}),
+				);
+
+				const res = await UploadFiles(filesWithDuration);
+				if (!res.ok) {
+					console.log(res);
+					throw new Error(String(res.status));
+				}
+				form.reset();
+
+				return res;
+			} finally {
+				setIsCalculating(false);
+			}
 		},
 		onSuccess: async () => {
 			queryClient.invalidateQueries({ queryKey: ["files"] });
+		},
+		onError: (error) => {
+			console.error(error);
 		},
 	});
 
@@ -76,8 +123,16 @@ export default function Admin() {
 						</div>
 					)}
 				</Field>
-				<Button variant={"ghost"} type="submit">
-					Button
+				<Button
+					variant={"ghost"}
+					type="submit"
+					disabled={loadFilesMutation.isPending || isCalculating}
+				>
+					{isCalculating
+						? "Duration Calculating..."
+						: loadFilesMutation.isPending
+							? "Uploading..."
+							: "Upload Audio"}
 				</Button>
 			</form>
 		</div>

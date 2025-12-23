@@ -1,23 +1,21 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
 import { api } from "../api";
 
-export function SongCart({ id }: { id: string }) {
-	const { data: song } = useQuery({
-		queryKey: ["song"],
-		queryFn: async () => {
-			const { data, error } = await api.files({ id }).data.get();
-			if (error) {
-				throw new Error(String(error.status));
-			}
-			return data;
-		},
-	});
+type songs = {
+id: string;
+duration: number;
+filename: string;
+fileSize: number;
+contentType: string;
+createdAt: Date;
+}
+
+export function SongCart({ song }: { song: songs }) {
 
 	return (
 		<div>
-			<div>{song?.fileName}</div>
+			<div>{song.filename.replace('_', '').replace('.mp3', '')}</div>
 		</div>
 	);
 }

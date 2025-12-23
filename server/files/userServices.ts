@@ -23,4 +23,4 @@ export const userRouter = new Elysia({
 	})
 	.get("/me", async ({ session }) => {
 		return session;
-	})
+	});

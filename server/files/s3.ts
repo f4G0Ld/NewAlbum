@@ -11,31 +11,18 @@ export const s3 = new Bun.S3Client({
 	secretAccessKey: process.env.S3_SECRET_KEY,
 });
 
-export async function uploadFile({ file }: { file: File }) {
+export async function uploadFile({
+	file,
+	duration,
+}: {
+	file: File;
+	duration: number;
+}) {
 	const byte = await file.arrayBuffer();
 	const buf: Buffer<ArrayBufferLike> = Buffer.from(byte);
 
 	const mimeType = mime.lookup(file.name);
 	const resolvedMimeType = mimeType ? mimeType : "application/octet-stream";
-
-	const getAudioDuration = (file: File): Promise<number> => {
-		return new Promise((resolve) => {
-			const audio = new Audio();
-			audio.src = URL.createObjectURL(file);
-			audio.onloadedmetadata = () => {
-				URL.revokeObjectURL(audio.src);
-				resolve(audio.duration);
-			};
-		});
-	};
-
-	let duration: number;
-
-	if (resolvedMimeType.startsWith("audio/")) {
-		duration = await getAudioDuration(file);
-		console.log(duration)
-	}
-	
 
 	let id: string | undefined;
 	await db.transaction(async (trx) => {
@@ -45,16 +32,16 @@ export async function uploadFile({ file }: { file: File }) {
 				filename: file.name,
 				fileSize: file.size,
 				contentType: resolvedMimeType,
-				duration,
+				duration: duration,
 			})
 			.returning();
 
 		id = f.id;
-
+	
 		const metadata = s3.file(id);
-
-		console.log(`song upload with id: ${id}`);
-
+	
+		console.log(`Song upload with id: ${id}; duration ${duration}`);
+	
 		console.log({
 			res: await metadata.write(buf, {
 				type: resolvedMimeType,

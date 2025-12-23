@@ -58,20 +58,21 @@ export const fileRouter = new Elysia({
 	.post(
 		"/",
 		async ({ request }) => {
-			try{
-				const form = request.formData();
-				const files = (await form).getAll("files") as File[];
-	
-				await Promise.all(
-					files.map(
-						async (f) =>
-							await uploadFile({
-								file: f
-							}),
-					),
+			try {
+				const form = await request.formData();
+				const files = form.getAll("files") as File[];
+				
+				const ids = await Promise.all(
+					files.map((f, i) => {
+						const duration = parseFloat(form.get(`duration_${i}`) as string) || 0;
+						return uploadFile({ file: f, duration });
+					}),
 				);
-			} catch (error) {console.log}
-		}
+				return { ids };
+			} catch (error) {
+				console.error(error);
+			}
+		},
 		// {
 		// 	auth: true,
 		// },

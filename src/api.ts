@@ -5,16 +5,18 @@ export const { api } = treaty<typeof app>("localhost:3000", {
 	fetch: { credentials: "include" },
 });
 
-export async function UploadFiles(files: File[]) {
+export async function UploadFiles(
+	filesWithDuration: Array<{ file: File; duration: number }>,
+) {
 	const form = new FormData();
 
-	files.forEach((f) => form.append("files", f));
-
-	const res = await fetch("/api/files", {
-		method: "POST",
-		body: form,
-		credentials: "include",
+	filesWithDuration.forEach((f, i) => {
+		form.append("files", f.file);
+		form.append(`duration_${i}`, f.duration.toString());
 	});
 
-	return res;
+	return fetch("/api/files", {
+		method: "POST",
+		body: form,
+	});
 }
