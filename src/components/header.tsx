@@ -11,7 +11,7 @@ export function Header() {
 			<div className="flex gap-15 text-2xl items-center">
 				<Link href="/">Store</Link>
 				<Link href="/">Live</Link>
-				<Link href="/">Videos</Link>
+				<Link href="/event">Event</Link>
 				<Link className="flex gap-2 items-center" href="/album">
 					New album
 					<Image

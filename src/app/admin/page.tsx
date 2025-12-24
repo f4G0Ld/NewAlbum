@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import { UploadFiles } from "@/src/api";
 import { queryClient } from "@/src/queryClient";
 import { useState } from "react";
+import { files } from "@/server/db/filesSchema";
+import { SongCart } from "@/src/components/songCard";
 
 const getAudioDuration = (file: File): Promise<number> => {
 	return new Promise((resolve, reject) => {
@@ -97,7 +99,7 @@ export default function Admin() {
 					<PiSignOutBold size={24} />
 				</Link>
 			</div>
-			<h1 className="text-[40px] leading-none">Admin Panel</h1>
+			<h1 className="text-[32px] leading-none">Admin Panel</h1>
 			<form
 				onSubmit={(e) => {
 					e.preventDefault();
@@ -106,8 +108,8 @@ export default function Admin() {
 			>
 				<Field name="file">
 					{(f) => (
-						<div className="space-y-3">
-							<h2 className="text-[20px]">Upload Song</h2>
+						<div className="space-y-3 bg-[#B8B2A5] w-fit p-4 rounded-lg">
+							<h2 className="text-[20px]">Click Below For Upload</h2>
 							<input
 								type="file"
 								multiple
@@ -118,20 +120,19 @@ export default function Admin() {
 									if (files !== null) f.handleChange(Array.from(files));
 								}}
 							/>
+							<Button
+								type="submit"
+								disabled={loadFilesMutation.isPending || isCalculating}
+							>
+								{isCalculating
+									? "Duration Calculating..."
+									: loadFilesMutation.isPending
+										? "Uploading..."
+										: "Upload Audio"}
+							</Button>
 						</div>
 					)}
 				</Field>
-				<Button
-					variant={"ghost"}
-					type="submit"
-					disabled={loadFilesMutation.isPending || isCalculating}
-				>
-					{isCalculating
-						? "Duration Calculating..."
-						: loadFilesMutation.isPending
-							? "Uploading..."
-							: "Upload Audio"}
-				</Button>
 			</form>
 			<div></div>
 		</div>

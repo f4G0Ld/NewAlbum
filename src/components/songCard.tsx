@@ -1,7 +1,5 @@
 "use client";
 
-import { PiPlay } from "react-icons/pi";
-
 type songs = {
 	id: string;
 	duration: number;
@@ -14,10 +12,9 @@ type songs = {
 export function SongCart({ song }: { song: songs }) {
 	return (
 		<div className="w-full">
-			<div className="flex justify-baseline items-center">
+			<div className="flex justify-between items-center py-4 px-6 outline">
 				<p className="font-[Anton] text-[20px]">{song.filename.replace("_", "").replace(".mp3", "")}</p>
 				<p>{song.duration}</p>
-				<PiPlay />
 			</div>
 		</div>
 	);
