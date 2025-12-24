@@ -79,7 +79,7 @@ export default function Admin() {
 		},
 		onSubmit: async ({ value }) => {
 			if (value.file === null) {
-				console.log("долбоеб, тут пусто");
+				console.log("Uploading Is Empty");
 			} else {
 				await loadFilesMutation.mutateAsync(value.file);
 			}
@@ -109,12 +109,12 @@ export default function Admin() {
 				<Field name="file">
 					{(f) => (
 						<div className="space-y-3 bg-[#B8B2A5] w-fit p-4 rounded-lg">
-							<h2 className="text-[20px]">Click Below For Upload</h2>
+							<h2 className="text-[20px]">Click Below For Song Upload</h2>
 							<input
+								className="cursor-pointer"
 								type="file"
 								multiple
 								accept="audio/"
-								placeholder="Upload Song"
 								onChange={(e) => {
 									const files = e.target.files;
 									if (files !== null) f.handleChange(Array.from(files));
