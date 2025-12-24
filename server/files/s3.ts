@@ -37,11 +37,11 @@ export async function uploadFile({
 			.returning();
 
 		id = f.id;
-	
+
 		const metadata = s3.file(id);
-	
+
 		console.log(`Song upload with id: ${id}; duration ${duration}`);
-	
+
 		console.log({
 			res: await metadata.write(buf, {
 				type: resolvedMimeType,

@@ -10,8 +10,6 @@ import { Button } from "@/components/ui/button";
 import { UploadFiles } from "@/src/api";
 import { queryClient } from "@/src/queryClient";
 import { useState } from "react";
-import { files } from "@/server/db/filesSchema";
-import { SongCart } from "@/src/components/songCard";
 
 const getAudioDuration = (file: File): Promise<number> => {
 	return new Promise((resolve, reject) => {
@@ -135,6 +133,7 @@ export default function Admin() {
 							: "Upload Audio"}
 				</Button>
 			</form>
+			<div></div>
 		</div>
 	);
 }
