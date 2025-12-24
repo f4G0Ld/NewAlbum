@@ -21,14 +21,14 @@ export default function Album() {
 		<div>
 			<Header />
 			<div className="flex flex-col gap-6 mb-15">
-				<div className="flex justify-between mx-12 items-baseline-last">
-					<div className="flex gap-4 items-baseline-last">
+				<div className="flex justify-between mx-12 items-end">
+					<div className="flex gap-4 items-end">
 						<h2 className="text-[32px] text-[Anton]">Song list</h2>
-						<p className="text-[20px]">
+						<p className="text-[18px]">
 							{songCount} {songCount === 1 ? "item" : "items"}
 						</p>
 					</div>
-					<p className="text-[20px]">Listen to an excerpt of a song</p>
+					<p className="text-[18px]">Listen to an excerpt of a song</p>
 				</div>
 				<div>
 					{songCount === 0 ? (

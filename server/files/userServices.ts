@@ -1,5 +1,5 @@
 import Elysia from "elysia";
-import { auth } from "../db/auth";
+import { auth } from "./auth";
 
 export const userRouter = new Elysia({
 	name: "user",

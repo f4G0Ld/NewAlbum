@@ -4,12 +4,12 @@ import Image from "next/image";
 import GroupLogoIcon from "../../public/GroupLogoIcon.svg";
 import Link from "next/link";
 import { PiSignOutBold } from "react-icons/pi";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useForm } from "@tanstack/react-form";
 import { Button } from "@/components/ui/button";
-import { UploadFiles } from "@/src/api";
+import { api, UploadFiles } from "@/src/api";
 import { queryClient } from "@/src/queryClient";
-import { useState } from "react";
+import { use, useState } from "react";
 import { files } from "@/server/db/filesSchema";
 import { SongCart } from "@/src/components/songCard";
 
@@ -31,6 +31,7 @@ const getAudioDuration = (file: File): Promise<number> => {
 
 export default function Admin() {
 	const [isCalculating, setIsCalculating] = useState(false);
+	const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
 
 	const loadFilesMutation = useMutation({
 		mutationFn: async (files: File[]) => {
@@ -73,6 +74,33 @@ export default function Admin() {
 		},
 	});
 
+	const deleteMutation = useMutation({
+		mutationFn: async (songId: string) => {
+			const {error} = await api.files.delete({id: songId})
+			if (error) throw new Error(String(error.status))
+			return songId
+		},
+		onSuccess: (deletedId) => {
+			queryClient.invalidateQueries({queryKey: ['songs']})
+			setDeleteConfirm(null)
+		},
+		onError: (error) => {
+			alert(`Delete Error: ${error.message}`)
+		}
+	})
+
+	const handleDelete = (id: string) => {
+		if (deleteConfirm !== id) {
+			setDeleteConfirm(id)
+			return
+		}
+		deleteMutation.mutate(id)
+	}
+
+	const cancelDelete = () => {
+		setDeleteConfirm(null)
+	}
+
 	const form = useForm({
 		defaultValues: {
 			file: null as File[] | null,
@@ -88,9 +116,18 @@ export default function Admin() {
 
 	const Field = form.Field;
 
+	const { data: songs } = useQuery({
+		queryKey: ["songs"],
+		queryFn: async () => {
+			const { data, error } = await api.files.get();
+			if (error) throw new Error(String(error.status));
+			return data;
+		},
+	});
+
 	return (
-		<div className="px-15 py-10 flex flex-col gap-20">
-			<div className="flex justify-between">
+		<div className="flex flex-col gap-20 mb-15">
+			<div className="flex justify-between px-12 py-10">
 				<Link href="/">
 					<Image src={GroupLogoIcon} alt="!" width={124} height={60} />
 				</Link>
@@ -99,7 +136,7 @@ export default function Admin() {
 					<PiSignOutBold size={24} />
 				</Link>
 			</div>
-			<h1 className="text-[32px] leading-none">Admin Panel</h1>
+			<h1 className="text-[32px] leading-none mx-12">Admin Panel</h1>
 			<form
 				onSubmit={(e) => {
 					e.preventDefault();
@@ -108,7 +145,7 @@ export default function Admin() {
 			>
 				<Field name="file">
 					{(f) => (
-						<div className="space-y-3 bg-[#B8B2A5] w-fit p-4 rounded-lg">
+						<div className="space-y-3 bg-[#B8B2A5] w-fit p-4 rounded-lg mx-12">
 							<h2 className="text-[20px]">Click Below For Song Upload</h2>
 							<input
 								className="cursor-pointer"
@@ -134,7 +171,12 @@ export default function Admin() {
 					)}
 				</Field>
 			</form>
-			<div></div>
+			<div className="flex flex-col gap-5">
+				<h2 className="ml-12">Uploaded Songs</h2>
+				{songs?.map((s) => (
+					<SongCart song={s} key={s.id} />
+				))}
+			</div>
 		</div>
 	);
 }

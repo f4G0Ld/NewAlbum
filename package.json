@@ -6,7 +6,6 @@
 		"dev": "bun run --bun next dev --turbopack",
 		"build": "bunx --bun next build",
 		"start": "bunx --bun next start",
-
 		"lint": "eslint"
 	},
 	"dependencies": {
