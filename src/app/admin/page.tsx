@@ -9,9 +9,15 @@ import { useForm } from "@tanstack/react-form";
 import { Button } from "@/components/ui/button";
 import { api, UploadFiles } from "@/src/api";
 import { queryClient } from "@/src/queryClient";
-import { use, useState } from "react";
-import { files } from "@/server/db/filesSchema";
-import { SongCart } from "@/src/components/songCard";
+import { useState } from "react";
+import { FaPen, FaTrashAlt } from "react-icons/fa";
+import {
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "@/components/ui/dialog";
 
 const getAudioDuration = (file: File): Promise<number> => {
 	return new Promise((resolve, reject) => {
@@ -31,7 +37,6 @@ const getAudioDuration = (file: File): Promise<number> => {
 
 export default function Admin() {
 	const [isCalculating, setIsCalculating] = useState(false);
-	const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
 
 	const loadFilesMutation = useMutation({
 		mutationFn: async (files: File[]) => {
@@ -48,7 +53,10 @@ export default function Admin() {
 							} catch (error) {
 								console.error(`Bug for ${file.name}:`, error);
 							}
-						}
+						} else
+							throw new Error(
+								`Attempt To Upload Incorrect File`,
+							);
 
 						return { file, duration };
 					}),
@@ -67,7 +75,7 @@ export default function Admin() {
 			}
 		},
 		onSuccess: async () => {
-			queryClient.invalidateQueries({ queryKey: ["files"] });
+			queryClient.invalidateQueries({ queryKey: ["songs"] });
 		},
 		onError: (error) => {
 			console.error(error);
@@ -76,30 +84,40 @@ export default function Admin() {
 
 	const deleteMutation = useMutation({
 		mutationFn: async (songId: string) => {
-			const {error} = await api.files.delete({id: songId})
-			if (error) throw new Error(String(error.status))
-			return songId
+			const { error } = await api.files({ id: songId }).delete();
+			if (error) throw new Error(String(error.status));
+			return songId;
 		},
-		onSuccess: (deletedId) => {
-			queryClient.invalidateQueries({queryKey: ['songs']})
-			setDeleteConfirm(null)
+		onSuccess: async (deletedId) => {
+			await queryClient.invalidateQueries({ queryKey: ["songs"] });
 		},
 		onError: (error) => {
-			alert(`Delete Error: ${error.message}`)
-		}
-	})
+			alert(`Delete Error: ${error.message}`);
+		},
+	});
+
+	const updateMutation = useMutation({
+		mutationFn: async ({
+			songId,
+			filename,
+		}: {
+			songId: string;
+			filename: string;
+		}) => {
+			const { error } = await api.files({ id: songId }).put({ filename });
+			if (error) throw new Error(String(error.status));
+		},
+		onSuccess: async () => {
+			await queryClient.invalidateQueries({ queryKey: ["songs"] });
+		},
+		onError: (error) => {
+			alert(`Update Error: ${error.message}`);
+		},
+	});
 
 	const handleDelete = (id: string) => {
-		if (deleteConfirm !== id) {
-			setDeleteConfirm(id)
-			return
-		}
-		deleteMutation.mutate(id)
-	}
-
-	const cancelDelete = () => {
-		setDeleteConfirm(null)
-	}
+		deleteMutation.mutate(id);
+	};
 
 	const form = useForm({
 		defaultValues: {
@@ -124,6 +142,12 @@ export default function Admin() {
 			return data;
 		},
 	});
+
+	const formatDuration = (seconds: number) => {
+		const minutes = Math.floor(seconds / 60);
+		const remainingSeconds = seconds % 60;
+		return `${minutes}:${remainingSeconds < 10 ? 0 : ""}${remainingSeconds === 0 ? "00" : ""}${remainingSeconds}`;
+	};
 
 	return (
 		<div className="flex flex-col gap-20 mb-15">
@@ -172,10 +196,48 @@ export default function Admin() {
 				</Field>
 			</form>
 			<div className="flex flex-col gap-5">
-				<h2 className="ml-12">Uploaded Songs</h2>
-				{songs?.map((s) => (
-					<SongCart song={s} key={s.id} />
-				))}
+				<h2 className="ml-12 text-[20px]">Uploaded Songs</h2>
+				<div>
+					{songs?.map((song) => (
+						<div key={song.id}>
+							<div className="flex justify-between items-center py-4 px-6 mx-12 outline">
+								<p className="font-[Anton] text-[20px]">
+									«{song.filename.replace(".mp3", "")}»
+								</p>
+								<div className="flex gap-5">
+									<p>{formatDuration(song.duration)}</p>
+									<button
+										type="button"
+										onClick={() => {
+											if (
+												confirm(
+													`Delete song: "${song.filename.replace(".mp3", "")}"?`,
+												)
+											)
+												handleDelete(song.id);
+										}}
+										disabled={deleteMutation.isPending}
+									>
+										<FaTrashAlt
+											size={20}
+											className="hover:text-red-500 transition-colors cursor-pointer"
+										/>
+									</button>
+									<Dialog>
+										<DialogTrigger>
+											<FaPen />
+										</DialogTrigger>
+										<DialogContent>
+											<DialogHeader>
+												<DialogTitle>Update Song Title</DialogTitle>
+											</DialogHeader>
+										</DialogContent>
+									</Dialog>
+								</div>
+							</div>
+						</div>
+					))}
+				</div>
 			</div>
 		</div>
 	);

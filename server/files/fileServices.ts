@@ -2,12 +2,63 @@ import Elysia from "elysia";
 import { DeleteFile, GetFileMetadata, uploadFile, s3 } from "./s3";
 import { db } from "../db/database";
 import { userRouter } from "./userServices";
+import { files } from "../db/schema";
+import z from "zod/v4";
+import { eq } from "drizzle-orm";
 
 export const fileRouter = new Elysia({
 	prefix: "/files",
 })
 
 	.use(userRouter)
+
+	.get("/:id/stream", async ({ params, request, set }) => {
+		const meta = await GetFileMetadata(params.id);
+		if (!meta) {
+			set.status = 404;
+			return { error: "File not found" };
+		}
+
+		const s3File = s3.file(meta.id);
+		const fileStat = await s3File.stat();
+
+		set.headers["Content-Type"] = meta.contentType;
+		set.headers["Accept-Ranges"] = "bytes";
+		set.headers["Content-Length"] = String(fileStat.size);
+
+		// Обработка range-запросов
+		const range = request.headers.get("range");
+		if (range) {
+			const [start, end] = range
+				.replace(/bytes=/, "")
+				.split("-")
+				.map(Number);
+			const finalStart = start;
+			const finalEnd = end || fileStat.size - 1;
+
+			set.status = 206;
+			set.headers["Content-Range"] =
+				`bytes ${finalStart}-${finalEnd}/${fileStat.size}`;
+			set.headers["Content-Length"] = String(finalEnd - finalStart + 1);
+
+			return new Response(s3File.stream(), {
+				headers: {
+					["Content-Type"]: meta.contentType,
+					["Accept-Ranges"]: "bytes",
+					["Content-Length"]: String(fileStat.size),
+				},
+			});
+		}
+
+		// Полный файл
+		return new Response(s3File.stream(), {
+			headers: {
+				["Content-Type"]: meta.contentType,
+				["Accept-Ranges"]: "bytes",
+				["Content-Length"]: String(fileStat.size),
+			},
+		});
+	})
 
 	.get("/", async () => {
 		return await db.query.files.findMany();
@@ -79,12 +130,24 @@ export const fileRouter = new Elysia({
 		// },
 	)
 
+	.put(
+		"/:id",
+		async ({ params, body }) => {
+			return await db
+				.update(files)
+				.set({ filename: body.filename + ".mp3" })
+				.where(eq(files.id, params.id))
+				.returning();
+		},
+		{ body: z.object({ filename: z.string }) },
+	)
+
 	.delete(
 		"/:id",
 		async ({ params }) => {
 			await DeleteFile(params.id);
 		},
-		{
-			auth: true,
-		},
+		// {
+		// 	auth: true,
+		// },
 	);
