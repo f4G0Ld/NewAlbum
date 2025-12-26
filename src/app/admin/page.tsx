@@ -151,10 +151,10 @@ export default function Admin() {
 	};
 
 	if (isLoading) {
-		return <p className="text-2xl">Loading...</p>;
+		return <p className="text-2xl animate-pulse">Loading...</p>;
 	}
-	if (me?.user?.role !=='admin') {
-		return (<p className="text-2xl">Redirecting</p>)
+	if (me?.user?.role !== "admin") {
+		return <p className="text-2xl">Redirecting</p>;
 	}
 
 	return (
