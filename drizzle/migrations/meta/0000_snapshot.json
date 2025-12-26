@@ -1,5 +1,5 @@
 {
-  "id": "28509e97-a3e8-48f7-a301-9337628b1fff",
+  "id": "8ebcb129-fddb-4c33-a783-8ff760b5f639",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -404,31 +404,6 @@
         "duration": {
           "name": "duration",
           "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.songs": {
-      "name": "songs",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "varchar(255)",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "title": {
-          "name": "title",
-          "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true
         }

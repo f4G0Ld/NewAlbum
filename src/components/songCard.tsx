@@ -1,6 +1,5 @@
 "use client";
 
-import { Pause, Play } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { FaPause, FaPlay } from "react-icons/fa";
 
@@ -14,7 +13,7 @@ export type songs = {
 };
 
 export function SongCart({ song }: { song: songs }) {
-	const [isPlaying, setIsPlaying] = useState(false)
+	const [isPlaying, setIsPlaying] = useState(false);
 	const formatDuration = (seconds: number) => {
 		const minutes = Math.floor(seconds / 60);
 		const remainingSeconds = seconds % 60;
@@ -24,22 +23,20 @@ export function SongCart({ song }: { song: songs }) {
 	const audioRef = useRef<HTMLAudioElement | null>(null);
 
 	useEffect(() => {
-		if (!audioRef.current) return
-		
-		const audio = audioRef.current
-		const handlePlay = () => setIsPlaying(true)
-		const handlePause = () => setIsPlaying(false)
+		if (!audioRef.current) return;
 
-		audio.addEventListener('play', handlePlay)
-		audio.addEventListener('pause', handlePause)
-		
+		const audio = audioRef.current;
+		const handlePlay = () => setIsPlaying(true);
+		const handlePause = () => setIsPlaying(false);
+
+		audio.addEventListener("play", handlePlay);
+		audio.addEventListener("pause", handlePause);
+
 		return () => {
-			audio.removeEventListener('play', handlePlay)
-			audio.removeEventListener('pause', handlePause)
-		}
-
-	}, [])
-	
+			audio.removeEventListener("play", handlePlay);
+			audio.removeEventListener("pause", handlePause);
+		};
+	}, []);
 
 	const playAudio = () => {
 		if (!audioRef.current) return;
@@ -50,7 +47,7 @@ export function SongCart({ song }: { song: songs }) {
 					audio.pause();
 				}
 			});
-			audioRef.current.play()
+			audioRef.current.play();
 		} else {
 			audioRef.current.pause();
 		}
@@ -58,15 +55,20 @@ export function SongCart({ song }: { song: songs }) {
 
 	return (
 		<div className="w-full">
-			<div className="flex justify-between items-center py-4 px-6 mx-12 outline">
+			<div className="flex justify-between items-center py-4 px-6 mx-12 outline outline-[#161A1B]">
 				<p className="font-[Anton] text-[20px]">
 					«{song.filename.replace(".mp3", "")}»
 				</p>
 				<div className="flex items-center gap-5">
 					<p>{formatDuration(song.duration)}</p>
-					<button onClick={playAudio} className="bg-[#161A1B] text-[#DCD9D2] p-3 rounded-full">
-						{!isPlaying ? <FaPlay size={12}/> : <FaPause size={12}/>}
+					<button
+						type="button"
+						onClick={playAudio}
+						className="bg-[#161A1B] text-[#DCD9D2] p-3 rounded-full cursor-pointer hover:opacity-90 transition-opacity"
+					>
+						{!isPlaying ? <FaPlay size={12} /> : <FaPause size={12} />}
 					</button>
+					{/** biome-ignore lint/a11y/useMediaCaption: <explanation> */}
 					<audio ref={audioRef}>
 						<source
 							src={`http://localhost:3000/api/files/${song.id}/stream`}

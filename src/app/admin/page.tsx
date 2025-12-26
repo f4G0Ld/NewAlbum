@@ -9,15 +9,19 @@ import { useForm } from "@tanstack/react-form";
 import { Button } from "@/components/ui/button";
 import { api, UploadFiles } from "@/src/api";
 import { queryClient } from "@/src/queryClient";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaPen, FaTrashAlt } from "react-icons/fa";
+import { songs } from "@/src/components/songCard";
+import { useRouter } from "next/navigation";
 import {
 	Dialog,
+	DialogClose,
 	DialogContent,
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
+import { toast } from "sonner";
 
 const getAudioDuration = (file: File): Promise<number> => {
 	return new Promise((resolve, reject) => {
@@ -38,6 +42,24 @@ const getAudioDuration = (file: File): Promise<number> => {
 export default function Admin() {
 	const [isCalculating, setIsCalculating] = useState(false);
 
+	const { data: me, isLoading } = useQuery({
+		queryKey: ["/me"],
+		queryFn: async () => {
+			const { data, error } = await api.user.me.get();
+			if (error) throw new Error(String(error.status));
+			return data;
+		},
+	});
+
+	const rt = useRouter();
+
+	useEffect(() => {
+		if (me?.user?.role !== "admin" && !isLoading) {
+			console.log("User have not enough rights");
+			rt.push("/");
+		}
+	});
+
 	const loadFilesMutation = useMutation({
 		mutationFn: async (files: File[]) => {
 			setIsCalculating(true);
@@ -53,10 +75,7 @@ export default function Admin() {
 							} catch (error) {
 								console.error(`Bug for ${file.name}:`, error);
 							}
-						} else
-							throw new Error(
-								`Attempt To Upload Incorrect File`,
-							);
+						} else throw new Error(`Attempt To Upload Incorrect File`);
 
 						return { file, duration };
 					}),
@@ -76,9 +95,10 @@ export default function Admin() {
 		},
 		onSuccess: async () => {
 			queryClient.invalidateQueries({ queryKey: ["songs"] });
+			toast.success("Song uploaded successfully");
 		},
 		onError: (error) => {
-			console.error(error);
+			toast.error(error.message);
 		},
 	});
 
@@ -93,25 +113,6 @@ export default function Admin() {
 		},
 		onError: (error) => {
 			alert(`Delete Error: ${error.message}`);
-		},
-	});
-
-	const updateMutation = useMutation({
-		mutationFn: async ({
-			songId,
-			filename,
-		}: {
-			songId: string;
-			filename: string;
-		}) => {
-			const { error } = await api.files({ id: songId }).put({ filename });
-			if (error) throw new Error(String(error.status));
-		},
-		onSuccess: async () => {
-			await queryClient.invalidateQueries({ queryKey: ["songs"] });
-		},
-		onError: (error) => {
-			alert(`Update Error: ${error.message}`);
 		},
 	});
 
@@ -148,6 +149,10 @@ export default function Admin() {
 		const remainingSeconds = seconds % 60;
 		return `${minutes}:${remainingSeconds < 10 ? 0 : ""}${remainingSeconds === 0 ? "00" : ""}${remainingSeconds}`;
 	};
+
+	if (isLoading) {
+		return <p className="text-2xl">Loading...</p>;
+	}
 
 	return (
 		<div className="flex flex-col gap-20 mb-15">
@@ -223,16 +228,7 @@ export default function Admin() {
 											className="hover:text-red-500 transition-colors cursor-pointer"
 										/>
 									</button>
-									<Dialog>
-										<DialogTrigger>
-											<FaPen />
-										</DialogTrigger>
-										<DialogContent>
-											<DialogHeader>
-												<DialogTitle>Update Song Title</DialogTitle>
-											</DialogHeader>
-										</DialogContent>
-									</Dialog>
+									<UpdateSong song={song} />
 								</div>
 							</div>
 						</div>
@@ -240,5 +236,80 @@ export default function Admin() {
 				</div>
 			</div>
 		</div>
+	);
+}
+
+function UpdateSong({ song }: { song: songs }) {
+	const updateMutation = useMutation({
+		mutationFn: async ({
+			songId,
+			filename,
+		}: {
+			songId: string;
+			filename: string;
+		}) => {
+			const { error } = await api.files({ id: songId }).put({ filename });
+			if (error) throw new Error(String(error.status));
+		},
+		onSuccess: async () => {
+			await queryClient.invalidateQueries({ queryKey: ["songs"] });
+		},
+		onError: (error) => {
+			alert(`Update Error: ${error.message}`);
+		},
+	});
+
+	const form = useForm({
+		defaultValues: {
+			filename: song.filename.replace(".mp3", ""),
+		},
+		onSubmit: async ({ value }) => {
+			await updateMutation.mutateAsync({
+				filename: value.filename,
+				songId: song.id,
+			});
+		},
+	});
+
+	const Field = form.Field;
+
+	return (
+		<Dialog>
+			<DialogTrigger>
+				<FaPen />
+			</DialogTrigger>
+			<DialogContent>
+				<DialogHeader>
+					<DialogTitle className="font-light">Update Song Title</DialogTitle>
+				</DialogHeader>
+				<form
+					className="flex flex-col gap-5"
+					onSubmit={(e) => {
+						e.preventDefault();
+						form.handleSubmit();
+					}}
+				>
+					<Field name="filename">
+						{(f) => (
+							<div className="flex flex-col gap-3">
+								<p className="text-[20px]">Audio Title</p>
+								<input
+									type="text"
+									value={f.state.value}
+									onChange={(e) => f.handleChange(e.target.value)}
+									className="text-[18px] bg-black/10 rounded-md px-3 py-2"
+								/>
+							</div>
+						)}
+					</Field>
+					<DialogClose
+						type={"submit"}
+						className="bg-[#B8B2A5] w-full py-2 rounded-md"
+					>
+						Save
+					</DialogClose>
+				</form>
+			</DialogContent>
+		</Dialog>
 	);
 }

@@ -1,6 +1,6 @@
 import mime from "mime-types";
 import { db } from "../db/database";
-import { files } from "../db/filesSchema";
+import { files } from "../db/schema";
 import { redis } from "bun";
 import { eq } from "drizzle-orm";
 

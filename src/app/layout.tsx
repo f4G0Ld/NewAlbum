@@ -5,6 +5,7 @@ import "@fontsource/anton";
 import "./globals.css";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "../queryClient";
+import { Toaster } from "@/components/ui/sonner";
 
 export default function RootLayout({
 	children,
@@ -15,7 +16,8 @@ export default function RootLayout({
 		<html lang="en">
 			<body className={`text-[Open Sans Condensed]`}>
 				<QueryClientProvider client={queryClient}>
-					{children}
+					{children} 
+					<Toaster position="bottom-right"/>
 				</QueryClientProvider>
 			</body>
 		</html>

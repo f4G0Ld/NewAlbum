@@ -1,12 +1,122 @@
-// 'use client'
+"use client";
 
-// import { useRouter } from "next/router"
-// import { useState } from "react"
+import { authClient } from "@/server/db/auth-client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
+import { useForm } from "@tanstack/react-form";
+import { useRouter } from "next/navigation";
+import z from "zod/v4";
 
-// export default function LogInPage() {
-//     const router = useRouter()
-//     const [loading, setLoading] = useState(false)
-//     const [error, setError] = useState('')
+export default function SignInPage() {
+	const navigate = useRouter();
+	const { isPending } = authClient.useSession();
 
-//     const handleSubmit
-// }
+	const form = useForm({
+		defaultValues: {
+			email: "",
+			password: "",
+		},
+		onSubmit: async ({ value }) => {
+			await authClient.signIn.email(
+				{
+					email: value.email,
+					password: value.password,
+				},
+				{
+					onSuccess: () => {
+						navigate.push("/admin");
+						toast.success("Logged in successful");
+					},
+					onError: (error) => {
+						toast.error(error.error.message);
+					},
+				},
+			);
+		},
+		validators: {
+			onSubmit: z.object({
+				email: z.email("Invalid email address"),
+				password: z.string().min(8, "Password must be at least 8 characters"),
+			}),
+		},
+	});
+
+	if (isPending) {
+		return;
+	}
+
+	return (
+		<div className="mx-auto w-full mt-20 max-w-sm">
+			<h1 className="mb-6 text-center text-[32px]">Log In</h1>
+
+			<form
+				onSubmit={(e) => {
+					e.preventDefault();
+					e.stopPropagation();
+					void form.handleSubmit();
+				}}
+				className="space-y-4"
+			>
+				<div>
+					<form.Field name="email">
+						{(field) => (
+							<div className="space-y-2">
+								<Label htmlFor={field.name}>E-mail</Label>
+								<Input
+									id={field.name}
+									name={field.name}
+									type="email"
+									value={field.state.value}
+									onBlur={field.handleBlur}
+									onChange={(e) => field.handleChange(e.target.value)}
+								/>
+								{field.state.meta.errors.map((error) => (
+									<p key={error?.message} className="text-red-500">
+										{error?.message}
+									</p>
+								))}
+							</div>
+						)}
+					</form.Field>
+				</div>
+
+				<div>
+					<form.Field name="password">
+						{(field) => (
+							<div className="space-y-2">
+								<Label htmlFor={field.name}>Password</Label>
+								<Input
+									id={field.name}
+									name={field.name}
+									type="password"
+									value={field.state.value}
+									onBlur={field.handleBlur}
+									onChange={(e) => field.handleChange(e.target.value)}
+								/>
+								{field.state.meta.errors.map((error) => (
+									<p key={error?.message} className="text-red-500">
+										{error?.message}
+									</p>
+								))}
+							</div>
+						)}
+					</form.Field>
+				</div>
+
+				<form.Subscribe>
+					{(state) => (
+						<Button
+							type="submit"
+							className="w-full"
+							disabled={!state.canSubmit || state.isSubmitting}
+						>
+							{state.isSubmitting ? "Submitting..." : "Log In"}
+						</Button>
+					)}
+				</form.Subscribe>
+			</form>
+		</div>
+	);
+}

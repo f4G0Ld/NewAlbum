@@ -133,13 +133,12 @@ export const fileRouter = new Elysia({
 	.put(
 		"/:id",
 		async ({ params, body }) => {
-			return await db
+			await db
 				.update(files)
 				.set({ filename: body.filename + ".mp3" })
-				.where(eq(files.id, params.id))
-				.returning();
+				.where(eq(files.id, params.id));
 		},
-		{ body: z.object({ filename: z.string }) },
+		{ body: z.object({ filename: z.string() }) },
 	)
 
 	.delete(
