@@ -5,6 +5,9 @@ import Barcode from "../public/Barcode.svg";
 export function Ticket() {
 	return (
 		<div className="grid grid-cols-6 bg-[#DCD9D2] text-[18px] max-w-6xl">
+			<span className="bg-[#FFE484] p-7.5 rounded-full font-[Anton] text-[40px] absolute transform -translate-x-1/2 -translate-y-1/2">
+				25$
+			</span>
 			<div className="col-span-5">
 				<Image src={TicketCover} alt="!" width={1098} height={200} />
 				<div className="flex justify-between px-15 py-8">
@@ -31,7 +34,7 @@ export function Ticket() {
 				</div>
 				<div className="flex-1 flex items-center justify-center pt-8 pr-4">
 					<div className="flex flex-col items-center gap-2 transform -rotate-90">
-						<Image src={Barcode} alt="!" width={140}/>
+						<Image src={Barcode} alt="!" width={140} />
 						<h4 className="whitespace-nowrap">03 765 960 001 763</h4>
 					</div>
 				</div>

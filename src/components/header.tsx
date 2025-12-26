@@ -7,7 +7,7 @@ import WaweIcon1 from "../public/WaweIcon1.svg";
 
 export function Header() {
 	return (
-		<div className="flex justify-between p-12">
+		<div className="flex justify-between px-12 py-6">
 			<div className="flex gap-15 text-2xl items-center">
 				<Link href="/" className="hover:opacity-80 transition-opacity">Main</Link>
 				<Link href="/event" className="hover:opacity-80 transition-opacity">Event</Link>
