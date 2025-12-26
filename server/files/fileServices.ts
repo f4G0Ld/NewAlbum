@@ -57,7 +57,7 @@ export const fileRouter = new Elysia({
 					["Content-Length"]: String(fileStat.size),
 				},
 			});
-		} catch (error) throw new Error(String(Error))
+		} catch (error) {throw new Error(String(Error))}
 	})
 
 	.get("/", async () => {
