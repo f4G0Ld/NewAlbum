@@ -161,7 +161,13 @@ export default function Admin() {
 		<div className="flex flex-col gap-20 mb-15 max-w-480 mx-auto">
 			<div className="flex justify-between px-12 py-10">
 				<Link href="/">
-					<Image src={GroupLogoIcon} alt="!" width={124} height={60} />
+					<Image
+						className="hover:opacity-80 transition-opacity"
+						src={GroupLogoIcon}
+						alt="!"
+						width={124}
+						height={60}
+					/>
 				</Link>
 				<Link href="/sign-out" className="flex gap-3 items-center">
 					<p className="text-[24px]">Sign Out</p>
