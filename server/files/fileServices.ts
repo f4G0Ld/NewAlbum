@@ -13,34 +13,45 @@ export const fileRouter = new Elysia({
 	.use(userRouter)
 
 	.get("/:id/stream", async ({ params, request, set }) => {
-		const meta = await GetFileMetadata(params.id);
-		if (!meta) {
-			set.status = 404;
-			return { error: "File not found" };
-		}
+		try {
+			const meta = await GetFileMetadata(params.id);
+			if (!meta) {
+				set.status = 404;
+				return { error: "File not found" };
+			}
 
-		const s3File = s3.file(meta.id);
-		const fileStat = await s3File.stat();
+			const s3File = s3.file(meta.id);
+			const fileStat = await s3File.stat();
 
-		set.headers["Content-Type"] = meta.contentType;
-		set.headers["Accept-Ranges"] = "bytes";
-		set.headers["Content-Length"] = String(fileStat.size);
+			set.headers["Content-Type"] = meta.contentType;
+			set.headers["Accept-Ranges"] = "bytes";
+			set.headers["Content-Length"] = String(fileStat.size);
 
-		// Обработка range-запросов
-		const range = request.headers.get("range");
-		if (range) {
-			const [start, end] = range
-				.replace(/bytes=/, "")
-				.split("-")
-				.map(Number);
-			const finalStart = start;
-			const finalEnd = end || fileStat.size - 1;
+			// Обработка range-запросов
+			const range = request.headers.get("range");
+			if (range) {
+				const [start, end] = range
+					.replace(/bytes=/, "")
+					.split("-")
+					.map(Number);
+				const finalStart = start;
+				const finalEnd = end || fileStat.size - 1;
 
-			set.status = 206;
-			set.headers["Content-Range"] =
-				`bytes ${finalStart}-${finalEnd}/${fileStat.size}`;
-			set.headers["Content-Length"] = String(finalEnd - finalStart + 1);
+				set.status = 206;
+				set.headers["Content-Range"] =
+					`bytes ${finalStart}-${finalEnd}/${fileStat.size}`;
+				set.headers["Content-Length"] = String(finalEnd - finalStart + 1);
 
+				return new Response(s3File.stream(), {
+					headers: {
+						["Content-Type"]: meta.contentType,
+						["Accept-Ranges"]: "bytes",
+						["Content-Length"]: String(fileStat.size),
+					},
+				});
+			}
+
+			// Полный файл
 			return new Response(s3File.stream(), {
 				headers: {
 					["Content-Type"]: meta.contentType,
@@ -48,16 +59,9 @@ export const fileRouter = new Elysia({
 					["Content-Length"]: String(fileStat.size),
 				},
 			});
+		} catch (error) {
+			console.error(error);
 		}
-
-		// Полный файл
-		return new Response(s3File.stream(), {
-			headers: {
-				["Content-Type"]: meta.contentType,
-				["Accept-Ranges"]: "bytes",
-				["Content-Length"]: String(fileStat.size),
-			},
-		});
 	})
 
 	.get("/", async () => {
