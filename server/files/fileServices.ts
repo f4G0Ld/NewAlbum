@@ -13,7 +13,7 @@ export const fileRouter = new Elysia({
 	.use(userRouter)
 
 	.get("/:id/stream", async ({ params, request, set }) => {
-		try {
+		try {  // старт try
 			const meta = await GetFileMetadata(params.id);
 			if (!meta) {
 				set.status = 404;
@@ -27,7 +27,6 @@ export const fileRouter = new Elysia({
 			set.headers["Accept-Ranges"] = "bytes";
 			set.headers["Content-Length"] = String(fileStat.size);
 
-			// Обработка range-запросов
 			const range = request.headers.get("range");
 			if (range) {
 				const [start, end] = range
@@ -51,7 +50,6 @@ export const fileRouter = new Elysia({
 				});
 			}
 
-			// Полный файл
 			return new Response(s3File.stream(), {
 				headers: {
 					["Content-Type"]: meta.contentType,
@@ -59,9 +57,7 @@ export const fileRouter = new Elysia({
 					["Content-Length"]: String(fileStat.size),
 				},
 			});
-		} catch (error) {
-			console.error(error);
-		}
+		} catch (error) throw new Error(String(Error))
 	})
 
 	.get("/", async () => {
