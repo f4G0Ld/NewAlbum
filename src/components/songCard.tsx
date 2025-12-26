@@ -12,7 +12,7 @@ export type songs = {
 	createdAt: Date;
 };
 
-export function SongCart({ song }: { song: songs }) {
+export function SongCard({ song }: { song: songs }) {
 	const [isPlaying, setIsPlaying] = useState(false);
 	const formatDuration = (seconds: number) => {
 		const minutes = Math.floor(seconds / 60);
@@ -71,7 +71,7 @@ export function SongCart({ song }: { song: songs }) {
 					{/** biome-ignore lint/a11y/useMediaCaption: <explanation> */}
 					<audio ref={audioRef}>
 						<source
-							src={`http://localhost:3000/api/files/${song.id}/stream`}
+							src={`/api/files/${song.id}/stream`}
 							type={song.contentType}
 						/>
 					</audio>

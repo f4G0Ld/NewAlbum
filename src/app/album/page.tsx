@@ -2,7 +2,7 @@
 
 import { api } from "@/src/api";
 import { Header } from "@/src/components/header";
-import { SongCart } from "@/src/components/songCard";
+import { SongCard } from "@/src/components/songCard";
 import { useQuery } from "@tanstack/react-query";
 
 export default function Album() {
@@ -34,7 +34,7 @@ export default function Album() {
 					{songCount === 0 ? (
 						<p className="mx-12">No songs avaible yet</p>
 					) : (
-						songs?.map((s) => <SongCart song={s} key={s.id} />)
+						songs?.map((s) => <SongCard song={s} key={s.id} />)
 					)}
 				</div>
 			</div>
