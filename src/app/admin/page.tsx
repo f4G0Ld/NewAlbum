@@ -169,7 +169,7 @@ export default function Admin() {
 						height={60}
 					/>
 				</Link>
-				<Link href="/sign-out" className="flex gap-3 items-center">
+				<Link href="/auth/sign-out" className="flex gap-3 items-center">
 					<p className="text-[24px]">Sign Out</p>
 					<PiSignOutBold size={24} />
 				</Link>

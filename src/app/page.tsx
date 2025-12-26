@@ -31,7 +31,7 @@ export default function Main() {
 							width={1824}
 							height={909}
 						/>
-						<div className="relative flex justify-center">
+						<div className="relative justify-center hidden md:flex">
 							<span className="text-[40px] font-[Anton] bg-[#FFE484] p-7.5 rounded-full absolute transform translate-x-64 -translate-y-1/16 z-20">
 								new
 							</span>
