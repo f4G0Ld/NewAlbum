@@ -30,7 +30,7 @@ export function Header() {
 				</Link>
 			</div>
 			<Link href="/" className="hover:opacity-80 transition-opacity">
-				<Image src={GroupLogoIcon} alt="Group Logo" width={121} height={61} />
+				<Image className="select-none" src={GroupLogoIcon} alt="Group Logo" width={121} height={61} />
 			</Link>
 			<div className="flex gap-5 items-center">
 				<a

@@ -25,7 +25,7 @@ export default function Main() {
 
 					<div className="relative">
 						<Image
-							className="absolute mx-12 mb-12 pb-12"
+							className="absolute mx-12 mb-12 pb-12 select-none pointer-events-none"
 							src={MainBackground}
 							alt="!"
 							width={1824}
@@ -36,7 +36,7 @@ export default function Main() {
 								new
 							</span>
 							<Image
-								className="absolute top-1/2.5 right-1/4 rounded-full hover:animate-spin hover:[animation-duration:3s]"
+								className="absolute top-1/2.5 right-1/4 rounded-full hover:animate-spin hover:[animation-duration:3s] select-none"
 								src={VinylLogo}
 								alt="!"
 								width={840}

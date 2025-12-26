@@ -55,7 +55,7 @@ export default function Admin() {
 
 	useEffect(() => {
 		if (me?.user?.role !== "admin" && !isLoading) {
-			console.log("User have not enough rights");
+			toast.error("User have not enough rights");
 			rt.push("/");
 		}
 	});
@@ -152,6 +152,9 @@ export default function Admin() {
 
 	if (isLoading) {
 		return <p className="text-2xl">Loading...</p>;
+	}
+	if (me?.user?.role !=='admin') {
+		return (<p className="text-2xl">Redirecting</p>)
 	}
 
 	return (
