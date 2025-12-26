@@ -12,8 +12,8 @@ export default function Event() {
 	return (
 		<div className="">
 			<Header />
-			<div className="relative flex flex-col items-center justify-center">
-				<div className="absolute -z-10  min-h-120 inset-0 mx-12">
+			<div className="relative flex flex-col items-center justify-center max-w-480 mx-auto">
+				<div className="absolute -z-10 min-h-120 inset-0 mx-12">
 					<Image
 						className="object-cover"
 						src={EventBackground}
@@ -25,7 +25,7 @@ export default function Event() {
 					<Ticket />
 				</div>
 			</div>
-			<div className="my-6 space-y-6">
+			<div className="my-6 space-y-6 max-w-480 mx-auto">
 				<div className="font-[Anton] mx-12">
 					<div className="px-12 py-5 flex justify-between items-center outline outline-[#161A1B] bg-[url('/bg1.svg')] bg-cover bg-center w-full">
 						<Image src={LiveNationLogo} alt="Live-Nation-Logo" />

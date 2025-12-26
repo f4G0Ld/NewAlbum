@@ -8,7 +8,7 @@ export default function Main() {
 		<div className="flex flex-col justify-center">
 			<div>
 				<Header />
-				<div className="">
+				<div className=" max-w-480 mx-auto">
 					<div className="flex justify-between items-end mx-12 mt-15">
 						<div className="flex flex-col gap-5 leading-none">
 							<p className="text-[24px]">NEW FIFTH ALBUM</p>
@@ -23,7 +23,7 @@ export default function Main() {
 						</div>
 					</div>
 
-					<div className="">
+					<div className="relative">
 						<Image
 							className="absolute mx-12 mb-12 pb-12"
 							src={MainBackground}
@@ -31,8 +31,8 @@ export default function Main() {
 							width={1824}
 							height={909}
 						/>
-						<div>
-							<span className="text-[40px] font-[Anton] bg-[#FFE484] p-7.5 rounded-full absolute right-1/3 z-20">
+						<div className="relative flex justify-center">
+							<span className="text-[40px] font-[Anton] bg-[#FFE484] p-7.5 rounded-full absolute transform translate-x-64 -translate-y-1/16 z-20">
 								new
 							</span>
 							<Image

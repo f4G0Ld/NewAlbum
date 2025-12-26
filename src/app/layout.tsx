@@ -16,8 +16,8 @@ export default function RootLayout({
 		<html lang="en">
 			<body className={`text-[Open Sans Condensed]`}>
 				<QueryClientProvider client={queryClient}>
-					{children} 
-					<Toaster position="bottom-right"/>
+					{children}
+					<Toaster position="bottom-right" />
 				</QueryClientProvider>
 			</body>
 		</html>

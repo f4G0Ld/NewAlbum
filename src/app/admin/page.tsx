@@ -155,7 +155,7 @@ export default function Admin() {
 	}
 
 	return (
-		<div className="flex flex-col gap-20 mb-15">
+		<div className="flex flex-col gap-20 mb-15 max-w-480 mx-auto">
 			<div className="flex justify-between px-12 py-10">
 				<Link href="/">
 					<Image src={GroupLogoIcon} alt="!" width={124} height={60} />
