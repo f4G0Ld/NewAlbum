@@ -64,41 +64,60 @@ export const fileRouter = new Elysia({
 
 	.get("/:id/stream", async ({ params, set }) => {
 		try {
+			console.log(`Stream request for file: ${params.id}`);
+			
 			const meta = await GetFileMetadata(params.id);
 			if (!meta) {
+				console.log(`File ${params.id} not found in metadata`);
 				set.status = 404;
 				return { error: "File not found" };
 			}
 
-			const s3File = s3.file(meta.id);
+			console.log(`Found metadata:`, meta);
 			
 			try {
+				const s3File = s3.file(meta.id);
 				const fileStat = await s3File.stat();
 				
-				set.headers["Content-Type"] = meta.contentType;
-				set.headers["Content-Length"] = String(fileStat.size);
-				set.headers["Access-Control-Allow-Origin"] = "*";
-
-				// Игнорируем range запросы и всегда возвращаем весь файл
+				console.log(`File stats: size=${fileStat.size}, exists=true`);
+				
+				// Получаем поток
 				const stream = s3File.stream();
+				
+				// Устанавливаем заголовки
+				set.headers = {
+					"Content-Type": meta.contentType,
+					"Content-Length": fileStat.size.toString(),
+					"Accept-Ranges": "bytes",
+					"Cache-Control": "public, max-age=31536000",
+				};
+
 				return new Response(stream, {
-					headers: {
-						"Content-Type": meta.contentType,
-						"Content-Length": String(fileStat.size),
-					},
+					headers: new Headers(set.headers as Record<string, string>)
 				});
 
 			} catch (s3Error) {
-				console.error("S3 error:", s3Error);
+				console.error("S3 access error:", s3Error);
 				set.status = 500;
-				return { error: "Failed to access file" };
+				return { 
+					error: "Failed to access file from storage",
+					details: s3Error instanceof Error ? s3Error.message : String(s3Error)
+				};
 			}
 
 		} catch (error) {
-			console.error("Stream error:", error);
+			console.error("Stream endpoint error:", error);
 			set.status = 500;
-			return { error: "Internal server error" };
+			return { 
+				error: "Internal server error",
+				details: error instanceof Error ? error.message : String(error)
+			};
 		}
+	})
+
+	// Добавьте простой эндпоинт для проверки
+	.get("/test", () => {
+		return { status: "File service is working" };
 	})
 
 	.get("/", async () => {
