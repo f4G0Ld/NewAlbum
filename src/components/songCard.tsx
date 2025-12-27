@@ -41,49 +41,50 @@ export function SongCard({ song }: { song: songs }) {
 		};
 	}, []);
 
-	// const playAudio = () => {
-	// 	if (!audioRef.current) return;
-	// 	if (audioRef.current.paused) {
-	// 		const audios = document.querySelectorAll("audio");
-	// 		audios.forEach((audio) => {
-	// 			if (audio !== audioRef.current) {
-	// 				audio.pause();
-	// 			}
-	// 		});
-	// 		audioRef.current.play();
-	// 	} else {
-	// 		audioRef.current.pause();
-	// 	}
-	// };
-	const playAudio = async () => {
+	const playAudio = () => {
 		if (!audioRef.current) return;
-		
-		const audio = audioRef.current;
-		
-		if (audio.paused) {
-			// Пауза всех других аудио
-			document.querySelectorAll("audio").forEach((a) => {
-				if (a !== audio) {
-					a.pause();
-					a.currentTime = 0;
+		if (audioRef.current.paused) {
+			const audios = document.querySelectorAll("audio");
+			audios.forEach((audio) => {
+				if (audio !== audioRef.current) {
+					audio.pause();
 				}
 			});
-			
-			setIsLoading(true);
-			setError(null);
-			
-			try {
-				await audio.play();
-			} catch (error) {
-				console.error("Play error:", error);
-				setError("Ошибка воспроизведения");
-				setIsPlaying(false);
-				setIsLoading(false);
-			}
+			audioRef.current.play();
 		} else {
-			audio.pause();
+			audioRef.current.pause();
 		}
 	};
+	
+	// const playAudio = async () => {
+	// 	if (!audioRef.current) return;
+		
+	// 	const audio = audioRef.current;
+		
+	// 	if (audio.paused) {
+	// 		// Пауза всех других аудио
+	// 		document.querySelectorAll("audio").forEach((a) => {
+	// 			if (a !== audio) {
+	// 				a.pause();
+	// 				a.currentTime = 0;
+	// 			}
+	// 		});
+			
+	// 		setIsLoading(true);
+	// 		setError(null);
+			
+	// 		try {
+	// 			await audio.play();
+	// 		} catch (error) {
+	// 			console.error("Play error:", error);
+	// 			setError("Ошибка воспроизведения");
+	// 			setIsPlaying(false);
+	// 			setIsLoading(false);
+	// 		}
+	// 	} else {
+	// 		audio.pause();
+	// 	}
+	// };
 
 
 	return (

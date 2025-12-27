@@ -12,110 +12,56 @@ export const fileRouter = new Elysia({
 
 	.use(userRouter)
 
-	// .get("/:id/stream", async ({ params, request, set }) => {
-	// 	try {
-	// 		const meta = await GetFileMetadata(params.id);
-	// 		if (!meta) {
-	// 			set.status = 404;
-	// 			return { error: "File not found" };
-	// 		}
-
-	// 		const s3File = s3.file(meta.id);
-	// 		const fileStat = await s3File.stat();
-
-	// 		set.headers["Content-Type"] = meta.contentType;
-	// 		set.headers["Accept-Ranges"] = "bytes";
-	// 		set.headers["Content-Length"] = String(fileStat.size);
-
-	// 		const range = request.headers.get("range");
-	// 		if (range) {
-	// 			const [start, end] = range
-	// 				.replace(/bytes=/, "")
-	// 				.split("-")
-	// 				.map(Number);
-	// 			const finalStart = start;
-	// 			const finalEnd = end || fileStat.size - 1;
-
-	// 			set.status = 206;
-	// 			set.headers["Content-Range"] =
-	// 				`bytes ${finalStart}-${finalEnd}/${fileStat.size}`;
-	// 			set.headers["Content-Length"] = String(finalEnd - finalStart + 1);
-
-	// 			return new Response(s3File.stream(), {
-	// 				headers: {
-	// 					["Content-Type"]: meta.contentType,
-	// 					["Accept-Ranges"]: "bytes",
-	// 					["Content-Length"]: String(fileStat.size),
-	// 				},
-	// 			});
-	// 		}
-
-	// 		return new Response(s3File.stream(), {
-	// 			headers: {
-	// 				["Content-Type"]: meta.contentType,
-	// 				["Accept-Ranges"]: "bytes",
-	// 				["Content-Length"]: String(fileStat.size),
-	// 			},
-	// 		});
-	// 	} catch (error) {
-	// 		throw new Error(String(Error));
-	// 	}
-	// })
-
-	.get("/:id/stream", async ({ params, set }) => {
+	.get("/:id/stream", async ({ params, request, set }) => {
 		try {
-			console.log(`Stream request for file: ${params.id}`);
-			
 			const meta = await GetFileMetadata(params.id);
 			if (!meta) {
-				console.log(`File ${params.id} not found in metadata`);
 				set.status = 404;
 				return { error: "File not found" };
 			}
 
-			console.log(`Found metadata:`, meta);
-			
-			try {
-				const s3File = s3.file(meta.id);
-				const fileStat = await s3File.stat();
-				
-				console.log(`File stats: size=${fileStat.size}, exists=true`);
-				
-				// Получаем поток
-				const stream = s3File.stream();
-				
-				// Устанавливаем заголовки
-				set.headers = {
-					"Content-Type": meta.contentType,
-					"Content-Length": fileStat.size.toString(),
-					"Accept-Ranges": "bytes",
-					"Cache-Control": "public, max-age=31536000",
-				};
+			const s3File = s3.file(meta.id);
+			const fileStat = await s3File.stat();
 
-				return new Response(stream, {
-					headers: new Headers(set.headers as Record<string, string>)
+			set.headers["Content-Type"] = meta.contentType;
+			set.headers["Accept-Ranges"] = "bytes";
+			set.headers["Content-Length"] = String(fileStat.size);
+
+			const range = request.headers.get("range");
+			if (range) {
+				const [start, end] = range
+					.replace(/bytes=/, "")
+					.split("-")
+					.map(Number);
+				const finalStart = start;
+				const finalEnd = end || fileStat.size - 1;
+
+				set.status = 206;
+				set.headers["Content-Range"] =
+					`bytes ${finalStart}-${finalEnd}/${fileStat.size}`;
+				set.headers["Content-Length"] = String(finalEnd - finalStart + 1);
+
+				return new Response(s3File.stream(), {
+					headers: {
+						["Content-Type"]: meta.contentType,
+						["Accept-Ranges"]: "bytes",
+						["Content-Length"]: String(fileStat.size),
+					},
 				});
-
-			} catch (s3Error) {
-				console.error("S3 access error:", s3Error);
-				set.status = 500;
-				return { 
-					error: "Failed to access file from storage",
-					details: s3Error instanceof Error ? s3Error.message : String(s3Error)
-				};
 			}
 
+			return new Response(s3File.stream(), {
+				headers: {
+					["Content-Type"]: meta.contentType,
+					["Accept-Ranges"]: "bytes",
+					["Content-Length"]: String(fileStat.size),
+				},
+			});
 		} catch (error) {
-			console.error("Stream endpoint error:", error);
-			set.status = 500;
-			return { 
-				error: "Internal server error",
-				details: error instanceof Error ? error.message : String(error)
-			};
+			throw new Error(String(Error));
 		}
 	})
 
-	// Добавьте простой эндпоинт для проверки
 	.get("/test", () => {
 		return { status: "File service is working" };
 	})
