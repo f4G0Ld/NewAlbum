@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
 	images: {
-		domains: ["localhost"],
+		domains: ["vasya.lunarweb.ru"],
 	},
 	/* config options here */
 };
