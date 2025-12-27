@@ -38,20 +38,46 @@ export function SongCard({ song }: { song: songs }) {
 		};
 	}, []);
 
-	const playAudio = () => {
+	// const playAudio = () => {
+	// 	if (!audioRef.current) return;
+	// 	if (audioRef.current.paused) {
+	// 		const audios = document.querySelectorAll("audio");
+	// 		audios.forEach((audio) => {
+	// 			if (audio !== audioRef.current) {
+	// 				audio.pause();
+	// 			}
+	// 		});
+	// 		audioRef.current.play();
+	// 	} else {
+	// 		audioRef.current.pause();
+	// 	}
+	// };
+	const playAudio = async () => {
 		if (!audioRef.current) return;
-		if (audioRef.current.paused) {
+
+		const audio = audioRef.current;
+		
+		if (audio.paused) {
+			// Пауза всех других аудио
 			const audios = document.querySelectorAll("audio");
-			audios.forEach((audio) => {
-				if (audio !== audioRef.current) {
-					audio.pause();
+			audios.forEach((a) => {
+				if (a !== audio) {
+					a.pause();
+					a.currentTime = 0;
 				}
 			});
-			audioRef.current.play();
+
+			try {
+				await audio.play();
+			} catch (error) {
+				console.error("Play error:", error);
+				setIsPlaying(false);
+			}
 		} else {
-			audioRef.current.pause();
+			audio.pause();
 		}
 	};
+
 
 	return (
 		<div className="w-full">
