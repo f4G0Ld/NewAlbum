@@ -15,15 +15,12 @@ export type songs = {
 export function SongCard({ song }: { song: songs }) {
 	const [isPlaying, setIsPlaying] = useState(false);
 	const audioRef = useRef<HTMLAudioElement | null>(null);
-	const [isLoading, setIsLoading] = useState(false);
-	const [error, setError] = useState<string | null>(null);
 
 	const formatDuration = (seconds: number) => {
 		const minutes = Math.floor(seconds / 60);
 		const remainingSeconds = seconds % 60;
 		return `${minutes}:${remainingSeconds < 10 ? 0 : ""}${remainingSeconds === 0 ? "00" : ""}${remainingSeconds}`;
 	};
-
 
 	useEffect(() => {
 		if (!audioRef.current) return;
@@ -55,37 +52,6 @@ export function SongCard({ song }: { song: songs }) {
 			audioRef.current.pause();
 		}
 	};
-	
-	// const playAudio = async () => {
-	// 	if (!audioRef.current) return;
-		
-	// 	const audio = audioRef.current;
-		
-	// 	if (audio.paused) {
-	// 		// Пауза всех других аудио
-	// 		document.querySelectorAll("audio").forEach((a) => {
-	// 			if (a !== audio) {
-	// 				a.pause();
-	// 				a.currentTime = 0;
-	// 			}
-	// 		});
-			
-	// 		setIsLoading(true);
-	// 		setError(null);
-			
-	// 		try {
-	// 			await audio.play();
-	// 		} catch (error) {
-	// 			console.error("Play error:", error);
-	// 			setError("Ошибка воспроизведения");
-	// 			setIsPlaying(false);
-	// 			setIsLoading(false);
-	// 		}
-	// 	} else {
-	// 		audio.pause();
-	// 	}
-	// };
-
 
 	return (
 		<div className="w-full">
