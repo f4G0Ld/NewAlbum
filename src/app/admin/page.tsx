@@ -159,7 +159,7 @@ export default function Admin() {
 
 	return (
 		<div className="flex flex-col gap-20 mb-15 max-w-480 mx-auto">
-			<div className="flex justify-between px-12 py-10">
+			<div className="flex justify-between m-2 md:px-12 md:py-10">
 				<Link href="/">
 					<Image
 						className="hover:opacity-80 transition-opacity"
@@ -210,7 +210,7 @@ export default function Admin() {
 				</Field>
 			</form>
 			<div className="flex flex-col gap-5">
-				<h2 className="ml-12 text-[20px]">Uploaded Songs</h2>
+				<h2 className="ml-2 md:ml-12 text-[20px]">Uploaded Songs</h2>
 				<div>
 					{songs?.map((song) => (
 						<div key={song.id}>
