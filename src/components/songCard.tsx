@@ -55,7 +55,7 @@ export function SongCard({ song }: { song: songs }) {
 
 	return (
 		<div className="w-full">
-			<div className="flex justify-between items-center py-4 px-6 mx-12 outline outline-[#161A1B]">
+			<div className="flex justify-between items-center py-4 px-6 mx-2 md:mx-12 outline outline-[#161A1B]">
 				<p className="font-[Anton] text-[20px]">
 					«{song.filename.replace(".mp3", "")}»
 				</p>

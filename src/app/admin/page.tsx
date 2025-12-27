@@ -174,7 +174,7 @@ export default function Admin() {
 					<PiSignOutBold size={24} />
 				</Link>
 			</div>
-			<h1 className="text-[32px] leading-none mx-12">Admin Panel</h1>
+			<h1 className="text-[32px] leading-none mx-2 md:mx-12">Admin Panel</h1>
 			<form
 				onSubmit={(e) => {
 					e.preventDefault();
@@ -183,7 +183,7 @@ export default function Admin() {
 			>
 				<Field name="file">
 					{(f) => (
-						<div className="space-y-3 bg-[#B8B2A5] w-fit p-4 rounded-lg mx-12">
+						<div className="space-y-3 bg-[#B8B2A5] w-fit p-4 rounded-lg mx-2 md:mx-12">
 							<h2 className="text-[20px]">Click Below For Song Upload</h2>
 							<input
 								className="cursor-pointer"
@@ -214,7 +214,7 @@ export default function Admin() {
 				<div>
 					{songs?.map((song) => (
 						<div key={song.id}>
-							<div className="flex justify-between items-center py-4 px-6 mx-12 outline">
+							<div className="flex justify-between items-center py-4 px-6 mx-2 md:mx-12 outline">
 								<p className="font-[Anton] text-[20px]">
 									«{song.filename.replace(".mp3", "")}»
 								</p>

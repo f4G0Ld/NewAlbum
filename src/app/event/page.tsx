@@ -14,13 +14,13 @@ export default function Event() {
 			<div className="relative flex flex-col items-center justify-center max-w-480 mx-auto">
 				<div className="absolute -z-10 min-h-120 inset-0 mx-12">
 					<Image
-						className="object-cover select-none hidden lg:flex"
+						className="object-cover select-none hidden xl:flex"
 						src={EventBackground}
 						alt="!"
 						fill={true}
 					/>
 				</div>
-				<div className="h-full lg:flex items-center justify-center my-21 hidden">
+				<div className="h-full xl:flex items-center justify-center my-21 hidden">
 					<Ticket />
 				</div>
 			</div>
