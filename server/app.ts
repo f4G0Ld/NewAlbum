@@ -7,7 +7,8 @@ import { ApiLogger } from "./ApiLogger";
 export const app = new Elysia({
 	name: "app",
 	prefix: "/api",
-}).onError(ApiLogger)
+})
+	.onError(ApiLogger)
 
 	.use(fileRouter)
 	.use(userRouter)

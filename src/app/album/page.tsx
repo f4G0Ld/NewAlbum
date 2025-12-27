@@ -21,7 +21,7 @@ export default function Album() {
 		<div className="">
 			<Header />
 			<div className="flex flex-col gap-6 my-15 max-w-480 mx-auto">
-				<div className="flex justify-between mx-12 items-end">
+				<div className="flex justify-between mx-2 md:mx-12 items-end">
 					<div className="flex gap-4 items-end">
 						<h2 className="text-[32px] text-[Anton]">Song list</h2>
 						<p className="text-[18px]">
@@ -32,7 +32,7 @@ export default function Album() {
 				</div>
 				<div>
 					{songCount === 0 ? (
-						<p className="mx-12">No songs avaible yet</p>
+						<p className="mx-2 md:mx-12">No songs avaible yet</p>
 					) : (
 						songs?.map((s) => <SongCard song={s} key={s.id} />)
 					)}

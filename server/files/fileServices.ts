@@ -13,7 +13,7 @@ export const fileRouter = new Elysia({
 	.use(userRouter)
 
 	.get("/:id/stream", async ({ params, request, set }) => {
-		try { 
+		try {
 			const meta = await GetFileMetadata(params.id);
 			if (!meta) {
 				set.status = 404;
@@ -57,7 +57,9 @@ export const fileRouter = new Elysia({
 					["Content-Length"]: String(fileStat.size),
 				},
 			});
-		} catch (error) {throw new Error(String(Error))}
+		} catch (error) {
+			throw new Error(String(Error));
+		}
 	})
 
 	.get("/", async () => {

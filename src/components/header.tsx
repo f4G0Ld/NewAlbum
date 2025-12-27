@@ -7,8 +7,8 @@ import WaweIcon1 from "../public/WaweIcon1.svg";
 
 export function Header() {
 	return (
-		<div className="flex md:flex-1   justify-between px-12 py-6 max-w-480 mx-auto">
-			<div className="flex gap-15 text-2xl items-center">
+		<div className="flex items-center justify-between sm:px-12 sm:py-6 p-2 mx-auto max-w-480">
+			<div className="flex flex-col md:flex-row gap-5 md:gap-15 text-2xl">
 				<Link href="/" className="hover:opacity-80 transition-opacity">
 					Main
 				</Link>
@@ -31,14 +31,14 @@ export function Header() {
 			</div>
 			<Link href="/" className="hover:opacity-80 transition-opacity">
 				<Image
-					className="select-none"
+					className="select-none size-40"
 					src={GroupLogoIcon}
 					alt="Group Logo"
 					width={121}
 					height={61}
 				/>
 			</Link>
-			<div className="flex gap-5 items-center">
+			<div className="flex gap-2 md:gap-5 items-center flex-col md:flex-row">
 				<a
 					href="https://x.com/ArcticMonkeys"
 					target="_blank"

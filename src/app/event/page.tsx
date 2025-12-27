@@ -5,7 +5,6 @@ import EventBackground from "../../public/EventBackground.svg";
 import LiveNationLogo from "../../public/LiveNationLogo.svg";
 import TicketMasterLogo from "../../public/TicketmasterLogo.svg";
 import ConcertUALogo from "../../public/ConcertUALogo.svg";
-import bg1 from "../../public/bg1.svg";
 import { Button } from "@/components/ui/button";
 
 export default function Event() {
@@ -15,33 +14,36 @@ export default function Event() {
 			<div className="relative flex flex-col items-center justify-center max-w-480 mx-auto">
 				<div className="absolute -z-10 min-h-120 inset-0 mx-12">
 					<Image
-						className="object-cover"
+						className="object-cover select-none hidden lg:flex"
 						src={EventBackground}
 						alt="!"
 						fill={true}
 					/>
 				</div>
-				<div className="h-full flex items-center justify-center my-21">
+				<div className="h-full lg:flex items-center justify-center my-21 hidden">
 					<Ticket />
 				</div>
 			</div>
+			<div className="flex justify-center lg:hidden">
+				<h1 className="text-[32px]">Click Below For More Info</h1>
+			</div>
 			<div className="my-6 space-y-6 max-w-480 mx-auto">
-				<div className="font-[Anton] mx-12">
-					<div className="px-12 py-5 flex justify-between items-center outline outline-[#161A1B] bg-[url('/bg1.svg')] bg-cover bg-center w-full">
+				<div className="font-[Anton] mx-2 md:mx-12">
+					<div className="px-12 py-5 flex flex-col sm:flex-row gap-2 sm:justify-between items-center outline outline-[#161A1B] w-full">
 						<Image src={LiveNationLogo} alt="Live-Nation-Logo" />
-						<Button className="py-5 px-15 rounded-none">BUY</Button>
+						<Button className="py-5 px-20 sm:px-15 rounded-none">BUY</Button>
 					</div>
 				</div>
-				<div className="font-[Anton] mx-12">
-					<div className="px-12 py-5 flex justify-between items-center outline outline-[#161A1B] bg-[url('/bg2.svg')] bg-cover bg-center w-full">
+				<div className="font-[Anton] mx-2 md:mx-12">
+					<div className="px-12 py-5 flex flex-col sm:flex-row gap-2 sm:justify-between items-center outline outline-[#161A1B] w-full">
 						<Image src={TicketMasterLogo} alt="Live-Nation-Logo" />
-						<Button className="py-5 px-15 rounded-none">BUY</Button>
+						<Button className="py-5 px-20 sm:px-15 rounded-none">BUY</Button>
 					</div>
 				</div>
-				<div className="font-[Anton] mx-12">
-					<div className="px-12 py-5 flex justify-between items-center outline outline-[#161A1B] bg-[url('/bg1.svg')] bg-cover bg-center w-full">
+				<div className="font-[Anton] mx-2 md:mx-12">
+					<div className="px-12 py-5 flex flex-col sm:flex-row gap-2 sm:justify-between items-center outline outline-[#161A1B] w-full">
 						<Image src={ConcertUALogo} alt="Live-Nation-Logo" />
-						<Button className="py-5 px-15 rounded-none">BUY</Button>
+						<Button className="py-5 px-20 sm:px-15 rounded-none">BUY</Button>
 					</div>
 				</div>
 			</div>

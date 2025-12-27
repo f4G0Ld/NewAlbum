@@ -51,7 +51,7 @@ export default function SignUpPage() {
 	}
 
 	return (
-		<div className="mx-auto w-full mt-20 max-w-sm">
+		<div className="mx-auto w-full mt-20 max-w-sm px-2">
 			<h1 className="mb-6 text-center text-[32px]">Create Account</h1>
 
 			<form

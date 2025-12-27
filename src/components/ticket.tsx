@@ -34,7 +34,12 @@ export function Ticket() {
 				</div>
 				<div className="flex-1 flex items-center justify-center pt-8 pr-4">
 					<div className="flex flex-col items-center gap-2 transform -rotate-90">
-						<Image src={Barcode} alt="!" width={140} />
+						<Image
+							className="select-none pointer-events-none"
+							src={Barcode}
+							alt="!"
+							width={140}
+						/>
 						<h4 className="whitespace-nowrap">03 765 960 001 763</h4>
 					</div>
 				</div>

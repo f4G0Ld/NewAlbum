@@ -20,7 +20,7 @@ export function ApiLogger({
 				| "PARSE"
 				| "INTERNAL_SERVER_ERROR"
 				| "INVALID_COOKIE_SIGNATURE"
-		)
+		  )
 		| (string & {});
 }) {
 	const { method, body } = request;
