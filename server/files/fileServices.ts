@@ -62,80 +62,44 @@ export const fileRouter = new Elysia({
 	// 	}
 	// })
 
-.get("/:id/stream", async ({ params, request, set }) => {
-	try {
-		const meta = await GetFileMetadata(params.id);
-		if (!meta) {
-			set.status = 404;
-			return { error: "File not found" };
-		}
-
-		const s3File = s3.file(meta.id);
-		
+	.get("/:id/stream", async ({ params, set }) => {
 		try {
-			const fileStat = await s3File.stat();
-			
-			set.headers["Content-Type"] = meta.contentType;
-			set.headers["Accept-Ranges"] = "bytes";
-			set.headers["Content-Length"] = String(fileStat.size);
-			
-			// Важно: Добавляем CORS заголовки
-			set.headers["Access-Control-Allow-Origin"] = "*";
-			set.headers["Access-Control-Expose-Headers"] = "Content-Length,Content-Range";
-
-			const range = request.headers.get("range");
-			
-			if (range) {
-				const parts = range.replace(/bytes=/, "").split("-");
-				const start = parseInt(parts[0], 10);
-				const end = parts[1] ? parseInt(parts[1], 10) : fileStat.size - 1;
-
-				if (start >= fileStat.size || end >= fileStat.size) {
-					set.status = 416;
-					return { error: "Requested range not satisfiable" };
-				}
-
-				const chunkSize = end - start + 1;
-				
-				set.status = 206;
-				set.headers["Content-Range"] = `bytes ${start}-${end}/${fileStat.size}`;
-				set.headers["Content-Length"] = String(chunkSize);
-
-				const stream = s3File.stream({ start, end });
-				return new Response(stream, {
-					status: 206,
-					headers: new Headers({
-						"Content-Type": meta.contentType,
-						"Content-Range": `bytes ${start}-${end}/${fileStat.size}`,
-						"Content-Length": String(chunkSize),
-						"Accept-Ranges": "bytes",
-					}),
-				});
+			const meta = await GetFileMetadata(params.id);
+			if (!meta) {
+				set.status = 404;
+				return { error: "File not found" };
 			}
 
-			// Если нет range заголовка, возвращаем весь файл
-			const stream = s3File.stream();
-			return new Response(stream, {
-				status: 200,
-				headers: new Headers({
-					"Content-Type": meta.contentType,
-					"Content-Length": String(fileStat.size),
-					"Accept-Ranges": "bytes",
-				}),
-			});
+			const s3File = s3.file(meta.id);
+			
+			try {
+				const fileStat = await s3File.stat();
+				
+				set.headers["Content-Type"] = meta.contentType;
+				set.headers["Content-Length"] = String(fileStat.size);
+				set.headers["Access-Control-Allow-Origin"] = "*";
 
-		} catch (s3Error) {
-			console.error("S3 error:", s3Error);
+				// Игнорируем range запросы и всегда возвращаем весь файл
+				const stream = s3File.stream();
+				return new Response(stream, {
+					headers: {
+						"Content-Type": meta.contentType,
+						"Content-Length": String(fileStat.size),
+					},
+				});
+
+			} catch (s3Error) {
+				console.error("S3 error:", s3Error);
+				set.status = 500;
+				return { error: "Failed to access file" };
+			}
+
+		} catch (error) {
+			console.error("Stream error:", error);
 			set.status = 500;
-			return { error: "Failed to access file" };
+			return { error: "Internal server error" };
 		}
-
-	} catch (error) {
-		console.error("Stream error:", error);
-		set.status = 500;
-		return { error: "Internal server error" };
-	}
-})
+	})
 
 	.get("/", async () => {
 		return await db.query.files.findMany();
