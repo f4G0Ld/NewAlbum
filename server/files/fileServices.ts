@@ -58,7 +58,7 @@ export const fileRouter = new Elysia({
 				},
 			});
 		} catch (error) {
-			throw new Error(String(Error));
+			throw error;
 		}
 	})
 
