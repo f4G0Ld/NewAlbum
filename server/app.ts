@@ -9,7 +9,11 @@ export const app = new Elysia({
 	prefix: "/api",
 })
 	.onError(ApiLogger)
-
+	.get("/health", async () => {
+		return "Hello world";
+	})
 	.use(fileRouter)
 	.use(userRouter)
 	.mount(auth.handler);
+
+export type App = typeof app;
