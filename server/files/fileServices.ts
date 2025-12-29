@@ -15,6 +15,7 @@ export const fileRouter = new Elysia({
   .get("/:id/stream", async ({ params, status }) => {
     console.log("Inside stream");
     try {
+      console.log("Getting meta");
       const meta = await GetFileMetadata(params.id);
       console.log({ meta });
       if (!meta) {
@@ -57,6 +58,7 @@ export const fileRouter = new Elysia({
         },
       });
     } catch (error) {
+      console.error(error);
       throw error;
     }
   })
