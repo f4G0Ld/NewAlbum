@@ -61,11 +61,11 @@ export type FileMetadata = {
 };
 
 export async function GetFileMetadata(id: string): Promise<FileMetadata> {
-	const cachedMetadata = await redis.get(id);
+	// const cachedMetadata = await redis.get(id);
 
-	if (cachedMetadata) {
-		return JSON.parse(cachedMetadata) as FileMetadata;
-	}
+	// if (cachedMetadata) {
+	// 	return JSON.parse(cachedMetadata) as FileMetadata;
+	// }
 
 	const metadata = await db.query.files.findFirst({
 		where: eq(files.id, id),
@@ -75,7 +75,7 @@ export async function GetFileMetadata(id: string): Promise<FileMetadata> {
 		throw new Error("file not found");
 	}
 
-	await redis.set(id, JSON.stringify(metadata), "EX", 24 * 60 * 60);
+	// await redis.set(id, JSON.stringify(metadata), "EX", 24 * 60 * 60);
 
 	return metadata as FileMetadata;
 }
