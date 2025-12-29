@@ -7,153 +7,153 @@ import z from "zod/v4";
 import { eq } from "drizzle-orm";
 
 export const fileRouter = new Elysia({
-  prefix: "/files",
+	prefix: "/files",
 })
 
-  .use(userRouter)
+	.use(userRouter)
 
-  .get("/:id/stream", async ({ params, status }) => {
-    console.log("Inside stream");
-    try {
-      console.log("Getting meta");
-      const meta = await GetFileMetadata(params.id);
-      console.log({ meta });
-      if (!meta) {
-        return status(404, "File not found");
-      }
+	.get("/:id/stream", async ({ params, status }) => {
+		console.log("Inside stream");
+		try {
+			console.log("Getting meta");
+			const meta = await GetFileMetadata(params.id);
+			console.log({ meta });
+			if (!meta) {
+				return status(404, "File not found");
+			}
 
-      const s3File = s3.file(meta.id);
-      console.log({ s3File });
-      const fileStat = await s3File.stat();
-      console.log({ fileStat });
+			const s3File = s3.file(meta.id);
+			console.log({ s3File });
+			const fileStat = await s3File.stat();
+			console.log({ fileStat });
 
-      // const range = request.headers.get("range");
-      // if (range) {
-      //   const [start, end] = range
-      //     .replace(/bytes=/, "")
-      //     .split("-")
-      //     .map(Number);
-      //   const finalStart = start;
-      //   const finalEnd = end || fileStat.size - 1;
-      //
-      //   set.status = 206;
-      //   set.headers["Content-Range"] =
-      //     `bytes ${finalStart}-${finalEnd}/${fileStat.size}`;
-      //   set.headers["Content-Length"] = String(finalEnd - finalStart + 1);
-      //
-      //   return new Response(s3File.stream(), {
-      //     headers: {
-      //       ["Content-Type"]: meta.contentType,
-      //       ["Accept-Ranges"]: "bytes",
-      //       ["Content-Length"]: String(fileStat.size),
-      //     },
-      //   });
-      // }
+			// const range = request.headers.get("range");
+			// if (range) {
+			//   const [start, end] = range
+			//     .replace(/bytes=/, "")
+			//     .split("-")
+			//     .map(Number);
+			//   const finalStart = start;
+			//   const finalEnd = end || fileStat.size - 1;
+			//
+			//   set.status = 206;
+			//   set.headers["Content-Range"] =
+			//     `bytes ${finalStart}-${finalEnd}/${fileStat.size}`;
+			//   set.headers["Content-Length"] = String(finalEnd - finalStart + 1);
+			//
+			//   return new Response(s3File.stream(), {
+			//     headers: {
+			//       ["Content-Type"]: meta.contentType,
+			//       ["Accept-Ranges"]: "bytes",
+			//       ["Content-Length"]: String(fileStat.size),
+			//     },
+			//   });
+			// }
 
-      return new Response(s3File.stream(), {
-        headers: {
-          ["Content-Type"]: meta.contentType,
-          ["Accept-Ranges"]: "bytes",
-          ["Content-Length"]: String(fileStat.size),
-        },
-      });
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  })
+			return new Response(s3File.stream(), {
+				headers: {
+					["Content-Type"]: meta.contentType,
+					["Accept-Ranges"]: "bytes",
+					["Content-Length"]: String(fileStat.size),
+				},
+			});
+		} catch (error) {
+			console.error(error);
+			throw error;
+		}
+	})
 
-  .get("/test", () => {
-    return { status: "File service is working" };
-  })
+	.get("/test", () => {
+		return { status: "File service is working" };
+	})
 
-  .get("/", async () => {
-    return await db.query.files.findMany();
-  })
+	.get("/", async () => {
+		return await db.query.files.findMany();
+	})
 
-  .get("/:id", async ({ params, set }) => {
-    const meta = await GetFileMetadata(params.id);
+	.get("/:id", async ({ params, set }) => {
+		const meta = await GetFileMetadata(params.id);
 
-    if (!meta) {
-      set.status = 404;
-      return { error: "File not found" };
-    }
+		if (!meta) {
+			set.status = 404;
+			return { error: "File not found" };
+		}
 
-    set.headers["Content-Type"] = meta.contentType;
-    set.headers["Content-Disposition"] =
-      `attachment; filename="${encodeURIComponent(meta.filename)}"`;
+		set.headers["Content-Type"] = meta.contentType;
+		set.headers["Content-Disposition"] =
+			`attachment; filename="${encodeURIComponent(meta.filename)}"`;
 
-    const s3File = s3.file(meta.id);
+		const s3File = s3.file(meta.id);
 
-    return new Response(s3File.stream(), {
-      headers: {
-        "Content-Type": meta.contentType,
-        "Content-Disposition": `attachment; filename="${encodeURIComponent(meta.filename)}"`,
-      },
-    });
-  })
+		return new Response(s3File.stream(), {
+			headers: {
+				"Content-Type": meta.contentType,
+				"Content-Disposition": `attachment; filename="${encodeURIComponent(meta.filename)}"`,
+			},
+		});
+	})
 
-  .get("/:id/data", async ({ params, set }) => {
-    const meta = await GetFileMetadata(params.id);
+	.get("/:id/data", async ({ params, set }) => {
+		const meta = await GetFileMetadata(params.id);
 
-    if (!meta) {
-      set.status = 404;
-      return {
-        error: "File not found",
-      };
-    }
+		if (!meta) {
+			set.status = 404;
+			return {
+				error: "File not found",
+			};
+		}
 
-    const s3File = s3.file(meta.id);
+		const s3File = s3.file(meta.id);
 
-    return {
-      contentType: meta.contentType,
-      fileName: meta.filename,
-      size: (await s3File.stat()).size,
-      duration: meta.duration,
-    };
-  })
+		return {
+			contentType: meta.contentType,
+			fileName: meta.filename,
+			size: (await s3File.stat()).size,
+			duration: meta.duration,
+		};
+	})
 
-  .post(
-    "/",
-    async ({ request }) => {
-      try {
-        const form = await request.formData();
-        const files = form.getAll("files") as File[];
+	.post(
+		"/",
+		async ({ request }) => {
+			try {
+				const form = await request.formData();
+				const files = form.getAll("files") as File[];
 
-        const ids = await Promise.all(
-          files.map((f, i) => {
-            const duration =
-              parseFloat(form.get(`duration_${i}`) as string) || 0;
-            return uploadFile({ file: f, duration });
-          }),
-        );
-        return { ids };
-      } catch (error) {
-        console.error(error);
-      }
-    },
-    // {
-    // 	auth: true,
-    // },
-  )
+				const ids = await Promise.all(
+					files.map((f, i) => {
+						const duration =
+							parseFloat(form.get(`duration_${i}`) as string) || 0;
+						return uploadFile({ file: f, duration });
+					}),
+				);
+				return { ids };
+			} catch (error) {
+				console.error(error);
+			}
+		},
+		// {
+		// 	auth: true,
+		// },
+	)
 
-  .put(
-    "/:id",
-    async ({ params, body }) => {
-      await db
-        .update(files)
-        .set({ filename: body.filename + ".mp3" })
-        .where(eq(files.id, params.id));
-    },
-    { body: z.object({ filename: z.string() }) },
-  )
+	.put(
+		"/:id",
+		async ({ params, body }) => {
+			await db
+				.update(files)
+				.set({ filename: body.filename + ".mp3" })
+				.where(eq(files.id, params.id));
+		},
+		{ body: z.object({ filename: z.string() }) },
+	)
 
-  .delete(
-    "/:id",
-    async ({ params }) => {
-      await DeleteFile(params.id);
-    },
-    // {
-    // 	auth: true,
-    // },
-  );
+	.delete(
+		"/:id",
+		async ({ params }) => {
+			await DeleteFile(params.id);
+		},
+		// {
+		// 	auth: true,
+		// },
+	);
