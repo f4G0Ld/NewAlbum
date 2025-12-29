@@ -18,7 +18,7 @@ export default function Album() {
 	const songCount = songs?.length || 0;
 
 	return (
-		<div className="">
+		<div>
 			<Header />
 			<div className="flex flex-col gap-6 my-15 max-w-480 mx-auto">
 				<div className="flex justify-between mx-2 md:mx-12 items-end">

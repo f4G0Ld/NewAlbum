@@ -7,11 +7,13 @@ export const userRouter = new Elysia({
 })
 
 	.mount(auth.handler)
+
 	.derive({ as: "global" }, async ({ request: { headers } }) => {
 		return {
 			session: auth.api.getSession({ headers }),
 		};
 	})
+
 	.macro({
 		auth: {
 			async resolve({ status, request: { headers } }) {
@@ -21,6 +23,7 @@ export const userRouter = new Elysia({
 			},
 		},
 	})
+
 	.get("/me", async ({ session }) => {
 		return session;
 	});

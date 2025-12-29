@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 
 export default function Event() {
 	return (
-		<div className="">
+		<div>
 			<Header />
 			<div className="relative flex flex-col items-center justify-center max-w-480 mx-auto">
 				<div className="absolute -z-10 min-h-120 inset-0 mx-12">
@@ -31,19 +31,25 @@ export default function Event() {
 				<div className="font-[Anton] mx-2 md:mx-12">
 					<div className="px-12 py-5 flex flex-col sm:flex-row gap-2 sm:justify-between items-center outline outline-[#161A1B] w-full">
 						<Image src={LiveNationLogo} alt="Live-Nation-Logo" />
-						<Button className="py-5 px-20 sm:px-15 rounded-none">BUY</Button>
+						<Button className="py-5 px-20 sm:px-15 rounded-none cursor-pointer">
+							BUY
+						</Button>
 					</div>
 				</div>
 				<div className="font-[Anton] mx-2 md:mx-12">
 					<div className="px-12 py-5 flex flex-col sm:flex-row gap-2 sm:justify-between items-center outline outline-[#161A1B] w-full">
 						<Image src={TicketMasterLogo} alt="Live-Nation-Logo" />
-						<Button className="py-5 px-20 sm:px-15 rounded-none">BUY</Button>
+						<Button className="py-5 px-20 sm:px-15 rounded-none cursor-pointer">
+							BUY
+						</Button>
 					</div>
 				</div>
 				<div className="font-[Anton] mx-2 md:mx-12">
 					<div className="px-12 py-5 flex flex-col sm:flex-row gap-2 sm:justify-between items-center outline outline-[#161A1B] w-full">
 						<Image src={ConcertUALogo} alt="Live-Nation-Logo" />
-						<Button className="py-5 px-20 sm:px-15 rounded-none">BUY</Button>
+						<Button className="py-5 px-20 sm:px-15 rounded-none cursor-pointer">
+							BUY
+						</Button>
 					</div>
 				</div>
 			</div>

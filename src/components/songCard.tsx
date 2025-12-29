@@ -73,7 +73,7 @@ export function SongCard({ song }: { song: songs }) {
 						<source
 							src={`/api/files/${song.id}/stream`}
 							type={song.contentType}
-							onError={((e) => console.log(e))}
+							onError={(e) => console.log(e)}
 						/>
 					</audio>
 				</div>

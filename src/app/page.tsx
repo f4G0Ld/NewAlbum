@@ -12,10 +12,13 @@ export default function Main() {
 					<div className="flex flex-col sm:flex-row items-center justify-between sm:items-end mx-12 mt-15 gap-5">
 						<div className="flex flex-col gap-5 leading-none items-center sm:items-start">
 							<p className="text-[24px]">NEW FIFTH ALBUM</p>
-							<h1 className="text-[60px] text-center sm:text-start">AM<br /> Artic Monkey</h1>
+							<h1 className="text-[60px] text-center sm:text-start">
+								AM
+								<br /> Artic Monkey
+							</h1>
 						</div>
 						<div className="bg-[#161A1B] text-[#DCD9D2] px-8 py-4 h-fit w-full sm:w-fit items-center sm:items-start flex flex-col">
-							<p className="">Release Date</p>
+							<p>Release Date</p>
 							<p className="text-[24px] font-[Anton]">September 9</p>
 						</div>
 					</div>

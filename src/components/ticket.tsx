@@ -13,7 +13,7 @@ export function Ticket() {
 				<div className="flex justify-between px-15 py-8">
 					<div className="space-y-2">
 						<h2 className="text-[32px]">AM - Arctic Monkey</h2>
-						<p className="">Adult Ticket</p>
+						<p>Adult Ticket</p>
 					</div>
 					<div className="space-y-2">
 						<h4>9.09.2013</h4>

@@ -1,7 +1,6 @@
 import mime from "mime-types";
 import { db } from "../db/database";
 import { files } from "../db/schema";
-import { redis } from "bun";
 import { eq } from "drizzle-orm";
 
 export const s3 = new Bun.S3Client({
@@ -61,12 +60,6 @@ export type FileMetadata = {
 };
 
 export async function GetFileMetadata(id: string): Promise<FileMetadata> {
-	// const cachedMetadata = await redis.get(id);
-
-	// if (cachedMetadata) {
-	// 	return JSON.parse(cachedMetadata) as FileMetadata;
-	// }
-
 	const metadata = await db.query.files.findFirst({
 		where: eq(files.id, id),
 	});
@@ -74,8 +67,6 @@ export async function GetFileMetadata(id: string): Promise<FileMetadata> {
 	if (!metadata) {
 		throw new Error("file not found");
 	}
-
-	// await redis.set(id, JSON.stringify(metadata), "EX", 24 * 60 * 60);
 
 	return metadata as FileMetadata;
 }
